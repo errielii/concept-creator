@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Stats Editor</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:#181818;color:#fff;font-family:Arial,sans-serif;display:flex;justify-content:center;padding:28px}
-#app{width:min(760px,100%);padding:0 4px;font-family:Arial,sans-serif}
+body{margin:0;min-height:100vh;background:#181818;color:#fff;font-family:'Nunito',Arial,sans-serif;display:flex;justify-content:center;padding:28px}
+#app{width:min(760px,100%);padding:0 4px;font-family:'Nunito',Arial,sans-serif}
 #styleTitle{
  text-align:center;font-size:46px;font-weight:900;margin:0 0 18px;
  color:#ffffff;-webkit-text-stroke:2px #000;text-shadow:3px 3px #000;
@@ -29,7 +30,7 @@ body{margin:0;min-height:100vh;background:#181818;color:#fff;font-family:Arial,s
 #grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .box{height:40px;position:relative;overflow:hidden;background:#202020;border:1px solid var(--color);border-radius:7px;cursor:pointer;user-select:none}
 .fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--color);transition:width .05s}
-.name{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;-webkit-text-stroke:1.5px #000;text-shadow:0 1px 2px #000}
+.name{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;-webkit-text-stroke:1.5px #000;text-shadow:0 1px 2px #000}
 .rainbow{
  background:linear-gradient(90deg,#ff0000,#ff7a00,#fff000,#25ff00,#00d9ff,#396cff,#9d39ff,#ff00d9,#ff0000);
  background-size:100% 100%;
@@ -221,7 +222,6 @@ document.getElementById('ten').onclick=()=>{
 
 document.getElementById('clear').onclick=()=>grid.innerHTML='';
 
-
 document.getElementById('savePng').onclick=async()=>{
   const button=document.getElementById('savePng');
   const oldText=button.textContent;
@@ -229,7 +229,6 @@ document.getElementById('savePng').onclick=async()=>{
   button.disabled=true;
 
   try{
-    // Render only the stats with html2canvas.
     const gridCanvas=await html2canvas(grid,{
       backgroundColor:null,
       scale:2,
@@ -250,8 +249,6 @@ document.getElementById('savePng').onclick=async()=>{
     const ctx=finalCanvas.getContext('2d');
     ctx.clearRect(0,0,finalCanvas.width,finalCanvas.height);
 
-    // Draw the title directly on canvas so html2canvas cannot turn
-    // the Ultra text gradient into a giant rectangular rainbow bar.
     ctx.save();
     ctx.textAlign='center';
     ctx.textBaseline='middle';
@@ -301,8 +298,6 @@ document.getElementById('savePng').onclick=async()=>{
     button.disabled=false;
   }
 };
-
-
 
 ['BLOCK','BUMP','DIVE','JUMP','SERVE','SET','SPEED','SPIKE'].forEach(x=>addBox(x,0));
 </script>
