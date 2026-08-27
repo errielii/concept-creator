@@ -4,302 +4,896 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Stats Editor</title>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:#181818;color:#fff;font-family:'Nunito',Arial,sans-serif;display:flex;justify-content:center;padding:28px}
-#app{width:min(760px,100%);padding:0 4px;font-family:'Nunito',Arial,sans-serif}
+
+body{
+margin:0;
+min-height:100vh;
+background:#181818;
+color:#fff;
+font-family:'Nunito',Arial,sans-serif;
+display:flex;
+justify-content:center;
+padding:28px
+}
+
+#app{
+width:min(760px,100%);
+padding:0 4px;
+font-family:'Nunito',Arial,sans-serif
+}
+
 #styleTitle{
- text-align:center;font-size:46px;font-weight:900;margin:0 0 18px;
- color:#ffffff;-webkit-text-stroke:2px #000;text-shadow:3px 3px #000;
+text-align:center;
+font-size:46px;
+font-weight:900;
+margin:0 0 18px;
+color:#ffffff;
+-webkit-text-stroke:2px #000;
+text-shadow:3px 3px #000
 }
+
 .title-gradient{
- background:linear-gradient(90deg,#ff0000 0%,#ff7a00 14%,#fff000 28%,#25ff00 42%,#00d9ff 56%,#396cff 70%,#9d39ff 84%,#ff00d9 100%);
- background-size:250% 100%;
- animation:grad 3s linear infinite;
- -webkit-background-clip:text;
- background-clip:text;
- -webkit-text-fill-color:transparent;
- color:transparent !important;
- font-weight:300 !important;
- font-style:italic !important;
- -webkit-text-stroke:0 !important;
- text-shadow:none !important;
+background:linear-gradient(
+90deg,
+#ff0000 0%,
+#ff7a00 14%,
+#fff000 28%,
+#25ff00 42%,
+#00d9ff 56%,
+#396cff 70%,
+#9d39ff 84%,
+#ff00d9 100%
+);
+background-size:250% 100%;
+animation:grad 3s linear infinite;
+-webkit-background-clip:text;
+background-clip:text;
+-webkit-text-fill-color:transparent;
+color:transparent !important;
+font-weight:300 !important;
+font-style:italic !important;
+-webkit-text-stroke:0 !important;
+text-shadow:none !important
 }
-@keyframes grad{to{background-position:400% 0}}
-#grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.box{height:40px;position:relative;overflow:hidden;background:#202020;border:1px solid var(--color);border-radius:7px;cursor:pointer;user-select:none}
-.fill{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--color);transition:width .05s}
-.name{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;-webkit-text-stroke:1.5px #000;text-shadow:0 1px 2px #000}
+
+@keyframes grad{
+to{background-position:400% 0}
+}
+
+#grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:8px
+}
+
+.box{
+height:40px;
+position:relative;
+overflow:hidden;
+background:transparent;
+border:1px solid var(--color);
+border-radius:7px;
+cursor:pointer;
+user-select:none
+}
+
+.fill{
+position:absolute;
+left:0;
+top:0;
+bottom:0;
+width:0;
+background:var(--color);
+transition:width .05s
+}
+
+.name{
+position:absolute;
+inset:0;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+font-weight:800;
+color:#fff;
+-webkit-text-stroke:1.5px #000;
+text-shadow:0 1px 2px #000
+}
+
 .rainbow{
- background:linear-gradient(90deg,#ff0000,#ff7a00,#fff000,#25ff00,#00d9ff,#396cff,#9d39ff,#ff00d9,#ff0000);
- background-size:100% 100%;
+background:linear-gradient(
+90deg,
+#ff0000,
+#ff7a00,
+#fff000,
+#25ff00,
+#00d9ff,
+#396cff,
+#9d39ff,
+#ff00d9,
+#ff0000
+);
+background-size:100% 100%
 }
-.remove{display:none;position:absolute;right:3px;top:1px;z-index:3;border:0;background:#000b;color:#fff;border-radius:4px}
-.box:hover .remove{display:block}
-#controls{margin-top:16px;padding:12px;background:#151515;border:1px solid #303030;border-radius:8px}
-.row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
-input,button{padding:8px 10px;border:1px solid #444;border-radius:5px;background:#202020;color:#fff}
-input[type=text]{flex:1;min-width:150px}
-input[type=number]{width:70px}
-.colorControl{display:flex;align-items:center;gap:6px;color:#fff;font-size:12px;font-weight:700}
-button{cursor:pointer}
-button:hover{background:#292929}
-#rainbowMode.active{background:#ff00d9;border-color:#ff00d9;color:#fff}
-.small{font-size:12px;color:#aaa}
-@media(max-width:600px){#grid{grid-template-columns:repeat(2,1fr)}#styleTitle{font-size:38px}}
+
+.remove{
+display:none;
+position:absolute;
+right:3px;
+top:1px;
+z-index:3;
+border:0;
+background:#000b;
+color:#fff;
+border-radius:4px
+}
+
+.box:hover .remove{
+display:block
+}
+
+#controls{
+margin-top:16px;
+padding:12px;
+background:#151515;
+border:1px solid #303030;
+border-radius:8px
+}
+
+.row{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-bottom:8px
+}
+
+input,button{
+padding:8px 10px;
+border:1px solid #444;
+border-radius:5px;
+background:#202020;
+color:#fff
+}
+
+input[type=text]{
+flex:1;
+min-width:150px
+}
+
+input[type=number]{
+width:70px
+}
+
+.colorControl{
+display:flex;
+align-items:center;
+gap:6px;
+color:#fff;
+font-size:12px;
+font-weight:700
+}
+
+button{
+cursor:pointer
+}
+
+button:hover{
+background:#292929
+}
+
+#rainbowMode.active{
+background:#ff00d9;
+border-color:#ff00d9;
+color:#fff
+}
+
+.small{
+font-size:12px;
+color:#aaa
+}
+
+@media(max-width:600px){
+#grid{
+grid-template-columns:repeat(2,1fr)
+}
+
+#styleTitle{
+font-size:38px
+}
+}
 </style>
 </head>
+
 <body>
+
 <div id="app">
-  <div id="styleTitle">Name</div>
-  <div id="grid"></div>
 
-  <div id="controls">
-    <div class="row">
-      <input id="styleName" value="Name" placeholder="Style name">
-      <button id="applyName">Apply</button>
-      <label class="colorControl">Style Color <input id="titleColor" type="color" value="#ffffff" title="Style color"></label>
-      <button id="gradientName">Ultra</button>
-    </div>
+<div id="styleTitle">Name</div>
 
-    <div class="row">
-      <input id="statName" placeholder="Stat name">
-      <input id="statValue" type="number" min="0" max="10" value="0">
-      <button id="add">+ Stat</button>
-    </div>
+<div id="grid"></div>
 
-    <div class="row">
-      <button id="rainbowMode">Rainbow</button>
-      <span id="rainbowHint" class="small">Click Rainbow, then click a stat</span>
-    </div>
+<div id="controls">
 
-    <div class="row">
-      <button id="zero">Reset</button>
-      <button id="ten">All 10/10</button>
-      <button id="clear">Clear all</button>
-      <button id="savePng">Save PNG</button>
-    </div>
+<div class="row">
 
-    <div class="small">
-      Scale: 0–1.9 red · 2–4.9 orange · 5–7.9 yellow · 8–9.9 green · 10/10 pink.
-    </div>
-  </div>
+<input
+id="styleName"
+value="Name"
+placeholder="Style name"
+>
+
+<button id="applyName">
+Apply
+</button>
+
+<label class="colorControl">
+Style Color
+<input
+id="titleColor"
+type="color"
+value="#ffffff"
+title="Style color"
+>
+</label>
+
+<button id="gradientName">
+Ultra
+</button>
+
+</div>
+
+<div class="row">
+
+<input
+id="statName"
+placeholder="Stat name"
+>
+
+<input
+id="statValue"
+type="number"
+min="0"
+max="10"
+value="0"
+>
+
+<button id="add">
++ Stat
+</button>
+
+</div>
+
+<div class="row">
+
+<button id="rainbowMode">
+Rainbow
+</button>
+
+<span id="rainbowHint" class="small">
+Click Rainbow, then click a stat
+</span>
+
+</div>
+
+<div class="row">
+
+<button id="zero">
+Reset
+</button>
+
+<button id="ten">
+All 10/10
+</button>
+
+<button id="clear">
+Clear all
+</button>
+
+<button id="savePng">
+Save PNG
+</button>
+
+</div>
+
+<div class="small">
+Scale: 0–1.9 red · 2–4.9 orange · 5–7.9 yellow · 8–9.9 green · 10/10 pink.
+</div>
+
+</div>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <script>
+
 const grid=document.getElementById('grid');
+
 let dragging=null;
 
 function color(v){
-  if(v >= 10) return '#ff00d9';
-  if(v >= 8) return '#25ff00';
-  if(v >= 5) return '#fff000';
-  if(v >= 2) return '#ff7a00';
-  return '#ff0000';
+
+if(v >= 10)
+return '#ff00d9';
+
+if(v >= 8)
+return '#25ff00';
+
+if(v >= 5)
+return '#fff000';
+
+if(v >= 2)
+return '#ff7a00';
+
+return '#ff0000';
+
 }
 
 function update(box){
-  const v=Number(box.dataset.value)||0;
-  const c=color(v);
-  box.style.setProperty('--color',c);
-  const fill=box.querySelector('.fill');
 
-  if(box.dataset.rainbow==='true'){
-    fill.classList.add('rainbow');
-    fill.style.background='';
-  }else{
-    fill.classList.remove('rainbow');
-    fill.style.background=c;
-  }
+const v=Number(box.dataset.value)||0;
 
-  fill.style.width=(v/10*100)+'%';
+const c=color(v);
+
+box.style.setProperty('--color',c);
+
+const fill=box.querySelector('.fill');
+
+if(box.dataset.rainbow==='true'){
+
+fill.classList.add('rainbow');
+fill.style.background='';
+
+}else{
+
+fill.classList.remove('rainbow');
+fill.style.background=c;
+
+}
+
+fill.style.width=(v/10*100)+'%';
+
 }
 
 function addBox(name,value=0){
-  const box=document.createElement('div');
-  box.className='box';
-  box.dataset.name=name.toUpperCase();
-  box.dataset.value=Math.max(0,Math.min(10,Number(value)||0));
-  box.dataset.rainbow='false';
 
-  const fill=document.createElement('div');
-  fill.className='fill';
+const box=document.createElement('div');
 
-  const text=document.createElement('div');
-  text.className='name';
-  text.textContent=name;
+box.className='box';
 
-  const remove=document.createElement('button');
-  remove.className='remove';
-  remove.textContent='×';
-  remove.onclick=e=>{e.stopPropagation();box.remove()};
+box.dataset.name=name.toUpperCase();
 
-  box.append(fill,text,remove);
-  grid.appendChild(box);
-  update(box);
+box.dataset.value=
+Math.max(
+0,
+Math.min(
+10,
+Number(value)||0
+)
+);
 
-  box.addEventListener('mousedown',e=>{
-    if(e.target===remove || rainbowMode) return;
-    dragging=box;
-    setValue(e);
-  });
+box.dataset.rainbow='false';
+
+const fill=document.createElement('div');
+
+fill.className='fill';
+
+const text=document.createElement('div');
+
+text.className='name';
+
+text.textContent=name;
+
+const remove=document.createElement('button');
+
+remove.className='remove';
+
+remove.textContent='×';
+
+remove.onclick=e=>{
+e.stopPropagation();
+box.remove()
+};
+
+box.append(
+fill,
+text,
+remove
+);
+
+grid.appendChild(box);
+
+update(box);
+
+box.addEventListener('mousedown',e=>{
+
+if(e.target===remove || rainbowMode)
+return;
+
+dragging=box;
+
+setValue(e);
+
+});
+
 }
 
 function setValue(e){
-  if(!dragging)return;
-  const r=dragging.getBoundingClientRect();
-  const v=Math.max(0,Math.min(10,((e.clientX-r.left)/r.width)*10));
-  dragging.dataset.value=v;
-  update(dragging);
+
+if(!dragging)
+return;
+
+const r=dragging.getBoundingClientRect();
+
+const v=Math.max(
+0,
+Math.min(
+10,
+((e.clientX-r.left)/r.width)*10
+)
+);
+
+dragging.dataset.value=v;
+
+update(dragging);
+
 }
-document.addEventListener('mousemove',setValue);
-document.addEventListener('mouseup',()=>dragging=null);
 
-document.getElementById('applyName').onclick=()=>{
-  document.getElementById('styleTitle').textContent=
-    document.getElementById('styleName').value.trim()||'Name';
+document.addEventListener(
+'mousemove',
+setValue
+);
+
+document.addEventListener(
+'mouseup',
+()=>dragging=null
+);
+
+document.getElementById(
+'applyName'
+).onclick=()=>{
+
+document.getElementById(
+'styleTitle'
+).textContent=
+document.getElementById(
+'styleName'
+).value.trim()||'Name';
+
 };
 
-document.getElementById('titleColor').oninput=(e)=>{
-  const title=document.getElementById('styleTitle');
-  title.classList.remove('title-gradient');
-  title.style.color=e.target.value || '#ffffff';
-  title.style.webkitTextFillColor='';
-  title.style.webkitTextStroke='2px #000';
-  title.style.textShadow='3px 3px #000';
+document.getElementById(
+'titleColor'
+).oninput=(e)=>{
+
+const title=
+document.getElementById(
+'styleTitle'
+);
+
+title.classList.remove(
+'title-gradient'
+);
+
+title.style.color=
+e.target.value||'#ffffff';
+
+title.style.webkitTextFillColor='';
+
+title.style.webkitTextStroke=
+'2px #000';
+
+title.style.textShadow=
+'3px 3px #000';
+
 };
 
-document.getElementById('gradientName').onclick=()=>{
-  const title=document.getElementById('styleTitle');
-  const ultra=title.classList.toggle('title-gradient');
-  if(!ultra){
-    title.style.color=document.getElementById('titleColor').value || '#ffffff';
-    title.style.webkitTextFillColor='';
-    title.style.fontWeight='900';
-    title.style.fontStyle='normal';
-    title.style.webkitTextStroke='2px #000';
-    title.style.textShadow='3px 3px #000';
-  }
+document.getElementById(
+'gradientName'
+).onclick=()=>{
+
+const title=
+document.getElementById(
+'styleTitle'
+);
+
+const ultra=
+title.classList.toggle(
+'title-gradient'
+);
+
+if(!ultra){
+
+title.style.color=
+document.getElementById(
+'titleColor'
+).value||'#ffffff';
+
+title.style.webkitTextFillColor='';
+
+title.style.fontWeight='900';
+
+title.style.fontStyle='normal';
+
+title.style.webkitTextStroke=
+'2px #000';
+
+title.style.textShadow=
+'3px 3px #000';
+
+}
+
 };
 
-document.getElementById('add').onclick=()=>{
-  const name=document.getElementById('statName').value.trim()||'NEW STAT';
-  addBox(name,document.getElementById('statValue').value);
-  document.getElementById('statName').value='';
-  document.getElementById('statValue').value=0;
+document.getElementById(
+'add'
+).onclick=()=>{
+
+const name=
+document.getElementById(
+'statName'
+).value.trim()||
+'NEW STAT';
+
+addBox(
+name,
+document.getElementById(
+'statValue'
+).value
+);
+
+document.getElementById(
+'statName'
+).value='';
+
+document.getElementById(
+'statValue'
+).value=0;
+
 };
 
 let rainbowMode=false;
 
-const rainbowButton=document.getElementById('rainbowMode');
-const rainbowHint=document.getElementById('rainbowHint');
+const rainbowButton=
+document.getElementById(
+'rainbowMode'
+);
+
+const rainbowHint=
+document.getElementById(
+'rainbowHint'
+);
 
 rainbowButton.onclick=()=>{
-  rainbowMode=!rainbowMode;
-  rainbowButton.classList.toggle('active',rainbowMode);
-  rainbowHint.textContent=rainbowMode
-    ? 'Now click the stats to enable/disable Rainbow'
-    : 'Click Rainbow, then click a stat to enable/disable it';
+
+rainbowMode=!rainbowMode;
+
+rainbowButton.classList.toggle(
+'active',
+rainbowMode
+);
+
+rainbowHint.textContent=
+rainbowMode
+?
+'Now click the stats to enable/disable Rainbow'
+:
+'Click Rainbow, then click a stat to enable/disable it';
+
 };
 
-grid.addEventListener('mousedown',(e)=>{
-  const box=e.target.closest('.box');
-  if(!box || e.target.closest('.remove') || !rainbowMode) return;
-  e.preventDefault();
-  box.dataset.rainbow=box.dataset.rainbow==='true'?'false':'true';
-  update(box);
+grid.addEventListener(
+'mousedown',
+(e)=>{
+
+const box=
+e.target.closest('.box');
+
+if(
+!box ||
+e.target.closest('.remove') ||
+!rainbowMode
+)
+return;
+
+e.preventDefault();
+
+box.dataset.rainbow=
+box.dataset.rainbow==='true'
+?
+'false'
+:
+'true';
+
+update(box);
+
+}
+);
+
+document.getElementById(
+'zero'
+).onclick=()=>{
+
+[
+...grid.children
+].forEach(box=>{
+
+box.dataset.value=0;
+
+update(box);
+
 });
 
-document.getElementById('zero').onclick=()=>{
-  [...grid.children].forEach(box=>{box.dataset.value=0;update(box)});
 };
 
-document.getElementById('ten').onclick=()=>{
-  [...grid.children].forEach(box=>{box.dataset.value=10;update(box)});
+document.getElementById(
+'ten'
+).onclick=()=>{
+
+[
+...grid.children
+].forEach(box=>{
+
+box.dataset.value=10;
+
+update(box);
+
+});
+
 };
 
-document.getElementById('clear').onclick=()=>grid.innerHTML='';
+document.getElementById(
+'clear'
+).onclick=()=>
+grid.innerHTML='';
 
-document.getElementById('savePng').onclick=async()=>{
-  const button=document.getElementById('savePng');
-  const oldText=button.textContent;
-  button.textContent='Saving...';
-  button.disabled=true;
+document.getElementById(
+'savePng'
+).onclick=async()=>{
 
-  try{
-    const gridCanvas=await html2canvas(grid,{
-      backgroundColor:null,
-      scale:2,
-      useCORS:true,
-      logging:false
-    });
+const button=
+document.getElementById(
+'savePng'
+);
 
-    const title=document.getElementById('styleTitle');
-    const titleText=title.textContent || 'Name';
-    const titleHeight=72;
-    const gap=14;
-    const scale=2;
+const oldText=
+button.textContent;
 
-    const finalCanvas=document.createElement('canvas');
-    finalCanvas.width=gridCanvas.width;
-    finalCanvas.height=gridCanvas.height+(titleHeight+gap)*scale;
+button.textContent=
+'Saving...';
 
-    const ctx=finalCanvas.getContext('2d');
-    ctx.clearRect(0,0,finalCanvas.width,finalCanvas.height);
+button.disabled=true;
 
-    ctx.save();
-    ctx.textAlign='center';
-    ctx.textBaseline='middle';
+try{
 
-    const isUltra=title.classList.contains('title-gradient');
-    const fontSize=46*scale;
+const gridCanvas=
+await html2canvas(
+grid,
+{
+backgroundColor:null,
+scale:2,
+useCORS:true,
+logging:false
+}
+);
 
-    if(isUltra){
-      ctx.font='italic 300 '+fontSize+'px Arial';
-      ctx.lineWidth=2*scale;
-      ctx.strokeStyle='#000000';
-      ctx.strokeText(titleText,finalCanvas.width/2,(titleHeight*scale)/2);
+const title=
+document.getElementById(
+'styleTitle'
+);
 
-      const gradient=ctx.createLinearGradient(0,0,finalCanvas.width,0);
-      gradient.addColorStop(0,'#ff0000');
-      gradient.addColorStop(.14,'#ff7a00');
-      gradient.addColorStop(.28,'#fff000');
-      gradient.addColorStop(.42,'#25ff00');
-      gradient.addColorStop(.56,'#00d9ff');
-      gradient.addColorStop(.70,'#396cff');
-      gradient.addColorStop(.84,'#9d39ff');
-      gradient.addColorStop(1,'#ff00d9');
+const titleText=
+title.textContent||'Name';
 
-      ctx.fillStyle=gradient;
-      ctx.fillText(titleText,finalCanvas.width/2,(titleHeight*scale)/2);
-    }else{
-      ctx.font='900 '+fontSize+'px Arial';
-      ctx.lineWidth=2*scale;
-      ctx.strokeStyle='#000000';
-      ctx.strokeText(titleText,finalCanvas.width/2,(titleHeight*scale)/2);
-      ctx.fillStyle=title.style.color || '#ffffff';
-      ctx.fillText(titleText,finalCanvas.width/2,(titleHeight*scale)/2);
-    }
-    ctx.restore();
+const titleHeight=72;
 
-    ctx.drawImage(gridCanvas,0,(titleHeight+gap)*scale);
+const gap=14;
 
-    const link=document.createElement('a');
-    link.download='stats.png';
-    link.href=finalCanvas.toDataURL('image/png');
-    link.click();
-  }catch(err){
-    alert('Could not save the image.');
-    console.error(err);
-  }finally{
-    button.textContent=oldText;
-    button.disabled=false;
-  }
+const scale=2;
+
+const finalCanvas=
+document.createElement(
+'canvas'
+);
+
+finalCanvas.width=
+gridCanvas.width;
+
+finalCanvas.height=
+gridCanvas.height+
+(titleHeight+gap)*scale;
+
+const ctx=
+finalCanvas.getContext(
+'2d'
+);
+
+ctx.clearRect(
+0,
+0,
+finalCanvas.width,
+finalCanvas.height
+);
+
+ctx.save();
+
+ctx.textAlign='center';
+
+ctx.textBaseline='middle';
+
+const isUltra=
+title.classList.contains(
+'title-gradient'
+);
+
+const fontSize=
+46*scale;
+
+if(isUltra){
+
+ctx.font=
+'italic 300 '+
+fontSize+
+'px Arial';
+
+ctx.lineWidth=
+2*scale;
+
+ctx.strokeStyle=
+'#000000';
+
+ctx.strokeText(
+titleText,
+finalCanvas.width/2,
+(titleHeight*scale)/2
+);
+
+const gradient=
+ctx.createLinearGradient(
+0,
+0,
+finalCanvas.width,
+0
+);
+
+gradient.addColorStop(
+0,
+'#ff0000'
+);
+
+gradient.addColorStop(
+.14,
+'#ff7a00'
+);
+
+gradient.addColorStop(
+.28,
+'#fff000'
+);
+
+gradient.addColorStop(
+.42,
+'#25ff00'
+);
+
+gradient.addColorStop(
+.56,
+'#00d9ff'
+);
+
+gradient.addColorStop(
+.70,
+'#396cff'
+);
+
+gradient.addColorStop(
+.84,
+'#9d39ff'
+);
+
+gradient.addColorStop(
+1,
+'#ff00d9'
+);
+
+ctx.fillStyle=gradient;
+
+ctx.fillText(
+titleText,
+finalCanvas.width/2,
+(titleHeight*scale)/2
+);
+
+}else{
+
+ctx.font=
+'900 '+
+fontSize+
+'px Arial';
+
+ctx.lineWidth=
+2*scale;
+
+ctx.strokeStyle=
+'#000000';
+
+ctx.strokeText(
+titleText,
+finalCanvas.width/2,
+(titleHeight*scale)/2
+);
+
+ctx.fillStyle=
+title.style.color||
+'#ffffff';
+
+ctx.fillText(
+titleText,
+finalCanvas.width/2,
+(titleHeight*scale)/2
+);
+
+}
+
+ctx.restore();
+
+ctx.drawImage(
+gridCanvas,
+0,
+(titleHeight+gap)*scale
+);
+
+const link=
+document.createElement('a');
+
+link.download=
+'stats.png';
+
+link.href=
+finalCanvas.toDataURL(
+'image/png'
+);
+
+link.click();
+
+}catch(err){
+
+alert(
+'Could not save the image.'
+);
+
+console.error(err);
+
+}finally{
+
+button.textContent=
+oldText;
+
+button.disabled=false;
+
+}
+
 };
 
-['BLOCK','BUMP','DIVE','JUMP','SERVE','SET','SPEED','SPIKE'].forEach(x=>addBox(x,0));
+[
+'BLOCK',
+'BUMP',
+'DIVE',
+'JUMP',
+'SERVE',
+'SET',
+'SPEED',
+'SPIKE'
+].forEach(
+x=>addBox(x,0)
+);
+
 </script>
+
 </body>
 </html>
