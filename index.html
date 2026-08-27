@@ -2,898 +2,848 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Stats Editor</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>Concept Creator</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&display=swap');
 
 *{box-sizing:border-box}
 
+:root{
+  --bg:#020814;
+  --panel:#06101d;
+  --line:#1d2a3b;
+}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  background:var(--bg);
+}
+
 body{
-margin:0;
-min-height:100vh;
-background:#181818;
-color:#fff;
-font-family:'Nunito',Arial,sans-serif;
-display:flex;
-justify-content:center;
-padding:28px
+  min-height:100vh;
+  color:#fff;
+  font-family:Arial,sans-serif;
+  display:flex;
+  justify-content:center;
+  padding:34px 18px;
 }
 
 #app{
-width:min(760px,100%);
-padding:0 4px;
-font-family:'Nunito',Arial,sans-serif
+  width:min(1000px,100%);
 }
 
+/* TITLE */
 #styleTitle{
-text-align:center;
-font-size:46px;
-font-weight:900;
-margin:0 0 18px;
-color:#ffffff;
--webkit-text-stroke:2px #000;
-text-shadow:3px 3px #000
+  margin:0 0 34px;
+  text-align:center;
+  font-family:Arial,sans-serif;
+  font-size:64px;
+  line-height:1;
+  font-weight:950;
+  font-style:normal;
+  color:#fff;
+  -webkit-text-stroke:2px #000;
+  text-shadow:none;
+  position:relative;
+  z-index:20;
 }
 
-.title-gradient{
-background:linear-gradient(
-90deg,
-#ff0000 0%,
-#ff7a00 14%,
-#fff000 28%,
-#25ff00 42%,
-#00d9ff 56%,
-#396cff 70%,
-#9d39ff 84%,
-#ff00d9 100%
-);
-background-size:250% 100%;
-animation:grad 3s linear infinite;
--webkit-background-clip:text;
-background-clip:text;
--webkit-text-fill-color:transparent;
-color:transparent !important;
-font-weight:300 !important;
-font-style:italic !important;
--webkit-text-stroke:0 !important;
-text-shadow:none !important
+#styleTitle.title-gradient{
+  font-family:'Orbitron',Arial,sans-serif !important;
+  font-size:60px;
+  font-weight:800 !important;
+  font-style:italic !important;
+  background:linear-gradient(
+    90deg,
+    #ff0000,#ff7a00,#fff000,#25ff00,
+    #00d9ff,#396cff,#9d39ff,#ff00d9,#ff0000
+  );
+  background-size:250% 100%;
+  animation:titleRainbow 3s linear infinite;
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:transparent !important;
+  -webkit-text-stroke:0 !important;
+  text-shadow:none !important;
 }
 
-@keyframes grad{
-to{background-position:400% 0}
+@keyframes titleRainbow{
+  to{background-position:400% 0}
 }
 
+#styleTitle.title-custom-gradient{
+  background:linear-gradient(
+    to bottom,
+    var(--title-top,#25ff00),
+    var(--title-bottom,#396cff)
+  );
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:transparent !important;
+}
+
+#styleTitle.title-ultra,
+#styleTitle.title-gradient{
+  font-style:italic !important;
+}
+
+/* STATS */
 #grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:8px
+  width:min(900px,100%);
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  column-gap:22px;
+  row-gap:22px;
+  align-items:start;
 }
 
 .box{
-height:40px;
-position:relative;
-overflow:hidden;
-background:transparent;
-border:1px solid var(--color);
-border-radius:7px;
-cursor:pointer;
-user-select:none
+  --color:#fff000;
+  position:relative;
+  height:72px;
+  width:100%;
+  min-width:0;
+  overflow:visible;
+  background:transparent;
+  border:4px solid var(--color);
+  border-radius:23px;
+  cursor:grab;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:none;
+  box-shadow:none;
 }
 
-.fill{
-position:absolute;
-left:0;
-top:0;
-bottom:0;
-width:0;
-background:var(--color);
-transition:width .05s
+ .fill{
+  position:absolute;
+  left:6px;
+  top:6px;
+  bottom:6px;
+  width:0;
+  max-width:calc(100% - 12px);
+  border-radius:17px;
+  background:var(--color);
+  z-index:2;
+  pointer-events:none;
 }
 
 .name{
-position:absolute;
-inset:0;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:22px;
-font-weight:800;
-color:#fff;
--webkit-text-stroke:1.5px #000;
-text-shadow:0 1px 2px #000
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:3;
+  padding:0 18px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:39px;
+  line-height:1;
+  font-weight:900;
+  font-style:normal;
+  color:#fff;
+  -webkit-text-stroke:2px #000;
+  text-shadow:none;
+  pointer-events:none;
 }
 
-.rainbow{
-background:linear-gradient(
-90deg,
-#ff0000,
-#ff7a00,
-#fff000,
-#25ff00,
-#00d9ff,
-#396cff,
-#9d39ff,
-#ff00d9,
-#ff0000
-);
-background-size:100% 100%
+.unused-rainbow{
+  background:linear-gradient(
+    90deg,
+    #ff0000 0%,
+    #ff7a00 13%,
+    #fff000 25%,
+    #25ff00 38%,
+    #00d9ff 51%,
+    #396cff 64%,
+    #9d39ff 78%,
+    #ff00d9 90%,
+    #ff0000 100%
+  );
+  background-size:250% 100%;
+  animation:statRainbow 2.5s linear infinite;
+}
+
+@keyframes statRainbow{
+  to{background-position:250% 0}
+}
+
+/* RAINBOW: outline only, with a tiny gap before the normal stat fill */
+.box.rainbow-border{
+  border-color:transparent !important;
+  background:transparent !important;
+}
+.box.rainbow-border::before{
+  content:"";
+  position:absolute;
+  inset:-4px;
+  border-radius:27px;
+  background:linear-gradient(
+    90deg,
+    #ff0000 0%,
+    #ff7a00 14%,
+    #fff000 28%,
+    #25ff00 42%,
+    #00d9ff 56%,
+    #396cff 70%,
+    #9d39ff 84%,
+    #ff00d9 100%
+  );
+  background-size:100% 100%;
+  background-position:0 0;
+  
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite:exclude;
+  padding:4px;
+  pointer-events:none;
+  z-index:4;
+}
+.box.rainbow-border .fill,
+.box.rainbow-border .name{
+  z-index:5;
+}
+
+.box.rainbow-border .fill{
+  background-image:linear-gradient(
+    90deg,
+    #ff0000 0%,
+    #ff7a00 14%,
+    #fff000 28%,
+    #25ff00 42%,
+    #00d9ff 56%,
+    #396cff 70%,
+    #9d39ff 84%,
+    #ff00d9 100%
+  ) !important;
+  background-color:transparent !important;
+  background-size:100% 100% !important;
+  background-repeat:no-repeat !important;
+  animation:none !important;
+}
+
+.fill{
+  left:6px !important;
+  top:6px !important;
+  bottom:6px !important;
+  max-width:calc(100% - 12px) !important;
+  border-radius:17px !important;
+}
+
+.box.rainbow-border .fill,
+.box[data-rainbow="true"] .fill {
+  background: linear-gradient(
+    90deg,
+    #ff0000 0%,
+    #ff7a00 14%,
+    #fff000 28%,
+    #25ff00 42%,
+    #00d9ff 56%,
+    #396cff 70%,
+    #9d39ff 84%,
+    #ff00d9 100%
+  ) !important;
+  background-image: linear-gradient(
+    90deg,
+    #ff0000 0%,
+    #ff7a00 14%,
+    #fff000 28%,
+    #25ff00 42%,
+    #00d9ff 56%,
+    #396cff 70%,
+    #9d39ff 84%,
+    #ff00d9 100%
+  ) !important;
+  background-size: 100% 100% !important;
+  background-repeat: no-repeat !important;
+  animation: none !important;
 }
 
 .remove{
-display:none;
-position:absolute;
-right:3px;
-top:1px;
-z-index:3;
-border:0;
-background:#000b;
-color:#fff;
-border-radius:4px
+  display:none;
+  position:absolute;
+  right:-36px;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:10;
+  width:25px;
+  height:25px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:#000c;
+  color:#fff;
+  font:700 15px Arial;
+  cursor:pointer;
 }
 
-.box:hover .remove{
-display:block
+.box:hover .remove,
+#app.editing-touch .remove{
+  display:block;
 }
 
+#app.exporting .remove{
+  display:none !important;
+}
+
+/* CONTROLS */
 #controls{
-margin-top:16px;
-padding:12px;
-background:#151515;
-border:1px solid #303030;
-border-radius:8px
+  width:min(820px,100%);
+  margin:30px auto 0;
+  padding:16px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:14px;
 }
 
 .row{
-display:flex;
-gap:8px;
-flex-wrap:wrap;
-margin-bottom:8px
+  display:flex;
+  align-items:center;
+  gap:9px;
+  flex-wrap:wrap;
+  margin-bottom:9px;
 }
 
 input,button{
-padding:8px 10px;
-border:1px solid #444;
-border-radius:5px;
-background:#202020;
-color:#fff
+  min-height:38px;
+  padding:8px 12px;
+  border:1px solid #344256;
+  border-radius:9px;
+  background:#0b1523;
+  color:#fff;
+  font-family:Arial,sans-serif;
+  outline:none;
 }
 
 input[type=text]{
-flex:1;
-min-width:150px
+  flex:1;
+  min-width:150px;
 }
 
 input[type=number]{
-width:70px
+  width:78px;
 }
 
-.colorControl{
-display:flex;
-align-items:center;
-gap:6px;
-color:#fff;
-font-size:12px;
-font-weight:700
+input[type=color]{
+  width:48px !important;
+  min-width:48px;
+  height:38px;
+  padding:3px;
 }
 
 button{
-cursor:pointer
+  cursor:pointer;
 }
 
 button:hover{
-background:#292929
+  background:#111e2e;
 }
 
 #rainbowMode.active{
-background:#ff00d9;
-border-color:#ff00d9;
-color:#fff
+  background:#ff00d9;
+  border-color:#ff00d9;
+}
+
+.colorControl{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  min-height:38px;
+  padding:0 4px;
+  font-size:12px;
+  font-weight:700;
 }
 
 .small{
-font-size:12px;
-color:#aaa
+  font-size:12px;
+  color:#8e9aaa;
 }
 
-@media(max-width:600px){
-#grid{
-grid-template-columns:repeat(2,1fr)
+/* MOBILE */
+@media(max-width:900px),(pointer:coarse){
+  body{padding:24px 10px}
+
+  #styleTitle{
+    font-size:45px;
+    margin-bottom:25px;
+  }
+
+  #styleTitle.title-gradient{
+    font-size:42px;
+  }
+
+  #grid{
+    width:100%;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    column-gap:12px;
+    row-gap:26px;
+  }
+
+  .box{
+    height:66px;
+    border-width:4px;
+    border-radius:21px;
+  }
+
+  .box::after{
+    inset:7px;
+    border-radius:13px;
+  }
+
+  .fill{
+    left:6px;
+    top:6px;
+    bottom:6px;
+    max-width:calc(100% - 12px);
+    border-radius:17px;
+  }
+
+  .name{
+    font-size:34px;
+  }
+
+  .remove{
+    display:block;
+    right:-31px;
+  }
+
+  #controls{
+    margin-top:22px;
+  }
+
+  input[type=number]{
+    width:100px;
+  }
 }
 
-#styleTitle{
-font-size:38px
+html.mobile-device #grid{
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
 }
+
+/* Prevent accidental text selection while dragging. */
+.dragging,
+.dragging *{
+  user-select:none !important;
+  -webkit-user-select:none !important;
+}
+
+.export-wrap .box.rainbow-border .fill,
+.box.rainbow-border .fill{
+  left:3px !important;
+  top:3px !important;
+  bottom:3px !important;
+  max-width:calc(100% - 6px) !important;
+  background:linear-gradient(
+    90deg,
+    #ff0000 0%,
+    #ff7a00 14%,
+    #fff000 28%,
+    #25ff00 42%,
+    #00d9ff 56%,
+    #396cff 70%,
+    #9d39ff 84%,
+    #ff00d9 100%
+  ) !important;
+  background-size:100% 100% !important;
 }
 </style>
 </head>
 
 <body>
-
 <div id="app">
 
-<div id="styleTitle">Name</div>
+  <div id="styleTitle">Name</div>
 
-<div id="grid"></div>
+  <div id="grid"></div>
 
-<div id="controls">
+  <div id="controls">
+    <div class="row">
+      <input id="styleName" type="text" value="Name" placeholder="Style name">
+      <button id="applyName">Apply</button>
 
-<div class="row">
+      <label class="colorControl">
+        Style Color
+        <input id="titleColor" type="color" value="#ffffff">
+      </label>
 
-<input
-id="styleName"
-value="Name"
-placeholder="Style name"
->
+      <button id="gradientName">Ultra</button>
+      <button id="titleGradient">Title Gradient</button>
+      <input id="titleGradientTop" type="color" value="#25ff00" title="Gradient top">
+      <input id="titleGradientBottom" type="color" value="#396cff" title="Gradient bottom">
+    </div>
 
-<button id="applyName">
-Apply
-</button>
+    <div class="row">
+      <input id="statName" type="text" placeholder="Stat name">
+      <input id="statValue" type="number" min="0" max="10" step="0.1" value="5">
+      <button id="add">+ Stat</button>
+    </div>
 
-<label class="colorControl">
-Style Color
-<input
-id="titleColor"
-type="color"
-value="#ffffff"
-title="Style color"
->
-</label>
+    <div class="row">
+      <button id="rainbowMode">Rainbow</button>
+      <span id="rainbowHint" class="small">Click Rainbow, then click a stat</span>
+    </div>
 
-<button id="gradientName">
-Ultra
-</button>
+    <div class="row">
+      <button id="zero">Reset</button>
+      <button id="ten">All 10/10</button>
+      <button id="clear">Clear all</button>
+      <button id="savePng">Save PNG</button>
+    </div>
 
-</div>
-
-<div class="row">
-
-<input
-id="statName"
-placeholder="Stat name"
->
-
-<input
-id="statValue"
-type="number"
-min="0"
-max="10"
-value="0"
->
-
-<button id="add">
-+ Stat
-</button>
-
-</div>
-
-<div class="row">
-
-<button id="rainbowMode">
-Rainbow
-</button>
-
-<span id="rainbowHint" class="small">
-Click Rainbow, then click a stat
-</span>
-
-</div>
-
-<div class="row">
-
-<button id="zero">
-Reset
-</button>
-
-<button id="ten">
-All 10/10
-</button>
-
-<button id="clear">
-Clear all
-</button>
-
-<button id="savePng">
-Save PNG
-</button>
-
-</div>
-
-<div class="small">
-Scale: 0–1.9 red · 2–4.9 orange · 5–7.9 yellow · 8–9.9 green · 10/10 pink.
-</div>
-
-</div>
-
+    <div class="small">
+      Scale: 0–1.9 red · 2–4.9 orange · 5–7.9 yellow · 8–9.9 green · 10/10 pink.
+    </div>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
 
 <script>
-
 const grid=document.getElementById('grid');
+const app=document.getElementById('app');
+
+if(window.matchMedia('(pointer:coarse)').matches ||
+   Math.min(window.innerWidth,screen.width)<=900){
+  document.documentElement.classList.add('mobile-device');
+}
 
 let dragging=null;
+let rainbowMode=false;
 
 function color(v){
-
-if(v >= 10)
-return '#ff00d9';
-
-if(v >= 8)
-return '#25ff00';
-
-if(v >= 5)
-return '#fff000';
-
-if(v >= 2)
-return '#ff7a00';
-
-return '#ff0000';
-
+  if(v>=10)return '#ff00d9';
+  if(v>=8)return '#25ff00';
+  if(v>=5)return '#fff000';
+  if(v>=2)return '#ff7a00';
+  return '#ff0000';
 }
 
 function update(box){
+  const v=Number(box.dataset.value)||0;
+  const c=color(v);
+  box.style.setProperty('--color',c);
 
-const v=Number(box.dataset.value)||0;
+  const fill=box.querySelector('.fill');
+  const rainbow=box.dataset.rainbow==='true';
 
-const c=color(v);
+  fill.classList.remove('rainbow');
+  fill.style.background=c;
+  box.classList.toggle('rainbow-border',rainbow);
 
-box.style.setProperty('--color',c);
-
-const fill=box.querySelector('.fill');
-
-if(box.dataset.rainbow==='true'){
-
-fill.classList.add('rainbow');
-fill.style.background='';
-
-}else{
-
-fill.classList.remove('rainbow');
-fill.style.background=c;
-
+  fill.style.width=(v/10*100)+'%';
 }
 
-fill.style.width=(v/10*100)+'%';
+function addBox(name,value=5){
+  const box=document.createElement('div');
+  box.className='box';
+  box.dataset.name=name;
+  box.dataset.value=Math.max(0,Math.min(10,Number(value)||5));
+  box.dataset.rainbow='false';
 
-}
+  const fill=document.createElement('div');
+  fill.className='fill';
 
-function addBox(name,value=0){
+  const text=document.createElement('div');
+  text.className='name';
+  text.textContent=name;
 
-const box=document.createElement('div');
+  const remove=document.createElement('button');
+  remove.className='remove';
+  remove.textContent='×';
+  remove.title='Remove stat';
 
-box.className='box';
+  remove.onclick=e=>{
+    e.stopPropagation();
+    box.remove();
+  };
 
-box.dataset.name=name.toUpperCase();
+  box.append(fill,text,remove);
+  grid.appendChild(box);
+  update(box);
 
-box.dataset.value=
-Math.max(
-0,
-Math.min(
-10,
-Number(value)||0
-)
-);
+  box.addEventListener('pointerdown',e=>{
+    if(e.target===remove || rainbowMode)return;
+    e.preventDefault();
+    dragging=box;
+    app.classList.add('dragging');
+    box.style.cursor='grabbing';
+    try{box.setPointerCapture(e.pointerId)}catch(_){}
+    setValue(e);
+  });
 
-box.dataset.rainbow='false';
+  box.addEventListener('pointermove',e=>{
+    if(dragging===box){
+      e.preventDefault();
+      setValue(e);
+    }
+  });
 
-const fill=document.createElement('div');
+  box.addEventListener('pointerup',()=>{
+    if(dragging===box){
+      dragging=null;
+      app.classList.remove('dragging');
+      box.style.cursor='grab';
+    }
+  });
 
-fill.className='fill';
-
-const text=document.createElement('div');
-
-text.className='name';
-
-text.textContent=name;
-
-const remove=document.createElement('button');
-
-remove.className='remove';
-
-remove.textContent='×';
-
-remove.onclick=e=>{
-e.stopPropagation();
-box.remove()
-};
-
-box.append(
-fill,
-text,
-remove
-);
-
-grid.appendChild(box);
-
-update(box);
-
-box.addEventListener('mousedown',e=>{
-
-if(e.target===remove || rainbowMode)
-return;
-
-dragging=box;
-
-setValue(e);
-
-});
-
+  box.addEventListener('pointercancel',()=>{
+    if(dragging===box){
+      dragging=null;
+      app.classList.remove('dragging');
+    }
+  });
 }
 
 function setValue(e){
-
-if(!dragging)
-return;
-
-const r=dragging.getBoundingClientRect();
-
-const v=Math.max(
-0,
-Math.min(
-10,
-((e.clientX-r.left)/r.width)*10
-)
-);
-
-dragging.dataset.value=v;
-
-update(dragging);
-
+  if(!dragging)return;
+  const r=dragging.getBoundingClientRect();
+  const v=Math.max(0,Math.min(10,((e.clientX-r.left)/r.width)*10));
+  dragging.dataset.value=v;
+  update(dragging);
 }
 
-document.addEventListener(
-'mousemove',
-setValue
-);
+document.addEventListener('pointerup',()=>{
+  dragging=null;
+  app.classList.remove('dragging');
+});
 
-document.addEventListener(
-'mouseup',
-()=>dragging=null
-);
-
-document.getElementById(
-'applyName'
-).onclick=()=>{
-
-document.getElementById(
-'styleTitle'
-).textContent=
-document.getElementById(
-'styleName'
-).value.trim()||'Name';
-
+/* Title */
+document.getElementById('applyName').onclick=()=>{
+  const value=document.getElementById('styleName').value.trim();
+  document.getElementById('styleTitle').textContent=value||'Name';
 };
 
-document.getElementById(
-'titleColor'
-).oninput=(e)=>{
-
-const title=
-document.getElementById(
-'styleTitle'
-);
-
-title.classList.remove(
-'title-gradient'
-);
-
-title.style.color=
-e.target.value||'#ffffff';
-
-title.style.webkitTextFillColor='';
-
-title.style.webkitTextStroke=
-'2px #000';
-
-title.style.textShadow=
-'3px 3px #000';
-
+document.getElementById('titleColor').oninput=e=>{
+  const title=document.getElementById('styleTitle');
+  title.classList.remove('title-gradient','title-custom-gradient');
+  title.style.color=e.target.value||'#fff';
+  title.style.webkitTextFillColor='';
+  title.style.webkitTextStroke='2px #000';
 };
 
-document.getElementById(
-'gradientName'
-).onclick=()=>{
-
-const title=
-document.getElementById(
-'styleTitle'
-);
-
-const ultra=
-title.classList.toggle(
-'title-gradient'
-);
-
-if(!ultra){
-
-title.style.color=
-document.getElementById(
-'titleColor'
-).value||'#ffffff';
-
-title.style.webkitTextFillColor='';
-
-title.style.fontWeight='900';
-
-title.style.fontStyle='normal';
-
-title.style.webkitTextStroke=
-'2px #000';
-
-title.style.textShadow=
-'3px 3px #000';
-
-}
-
+document.getElementById('gradientName').onclick=()=>{
+  const title=document.getElementById('styleTitle');
+  title.classList.toggle('title-gradient');
+  title.classList.remove('title-custom-gradient');
 };
 
-document.getElementById(
-'add'
-).onclick=()=>{
+const titleGradient=document.getElementById('titleGradient');
+const titleGradientTop=document.getElementById('titleGradientTop');
+const titleGradientBottom=document.getElementById('titleGradientBottom');
 
-const name=
-document.getElementById(
-'statName'
-).value.trim()||
-'NEW STAT';
+titleGradient.onclick=()=>{
+  const title=document.getElementById('styleTitle');
+  const active=title.classList.toggle('title-custom-gradient');
+  title.classList.remove('title-gradient');
 
-addBox(
-name,
-document.getElementById(
-'statValue'
-).value
-);
-
-document.getElementById(
-'statName'
-).value='';
-
-document.getElementById(
-'statValue'
-).value=0;
-
+  if(active){
+    title.style.setProperty('--title-top',titleGradientTop.value);
+    title.style.setProperty('--title-bottom',titleGradientBottom.value);
+  }
 };
 
-let rainbowMode=false;
+[titleGradientTop,titleGradientBottom].forEach(input=>{
+  input.oninput=()=>{
+    const title=document.getElementById('styleTitle');
+    title.style.setProperty('--title-top',titleGradientTop.value);
+    title.style.setProperty('--title-bottom',titleGradientBottom.value);
+  };
+});
 
-const rainbowButton=
-document.getElementById(
-'rainbowMode'
-);
+/* Add */
+document.getElementById('add').onclick=()=>{
+  const name=document.getElementById('statName').value.trim()||'NEW STAT';
+  const value=document.getElementById('statValue').value;
+  addBox(name,value);
+  document.getElementById('statName').value='';
+  document.getElementById('statValue').value=5;
+};
 
-const rainbowHint=
-document.getElementById(
-'rainbowHint'
-);
+/* Rainbow */
+const rainbowButton=document.getElementById('rainbowMode');
+const rainbowHint=document.getElementById('rainbowHint');
 
 rainbowButton.onclick=()=>{
-
-rainbowMode=!rainbowMode;
-
-rainbowButton.classList.toggle(
-'active',
-rainbowMode
-);
-
-rainbowHint.textContent=
-rainbowMode
-?
-'Now click the stats to enable/disable Rainbow'
-:
-'Click Rainbow, then click a stat to enable/disable it';
-
+  rainbowMode=!rainbowMode;
+  rainbowButton.classList.toggle('active',rainbowMode);
+  rainbowHint.textContent=rainbowMode
+    ? 'Now click a stat to enable/disable Rainbow'
+    : 'Click Rainbow, then click a stat';
 };
 
-grid.addEventListener(
-'mousedown',
-(e)=>{
-
-const box=
-e.target.closest('.box');
-
-if(
-!box ||
-e.target.closest('.remove') ||
-!rainbowMode
-)
-return;
-
-e.preventDefault();
-
-box.dataset.rainbow=
-box.dataset.rainbow==='true'
-?
-'false'
-:
-'true';
-
-update(box);
-
-}
-);
-
-document.getElementById(
-'zero'
-).onclick=()=>{
-
-[
-...grid.children
-].forEach(box=>{
-
-box.dataset.value=0;
-
-update(box);
-
+grid.addEventListener('click',e=>{
+  const box=e.target.closest('.box');
+  if(!box || e.target.closest('.remove') || !rainbowMode)return;
+  box.dataset.rainbow=box.dataset.rainbow==='true'?'false':'true';
+  update(box);
 });
 
+/* Reset */
+document.getElementById('zero').onclick=()=>{
+  [...grid.children].forEach(box=>{
+    box.dataset.value=0;
+    update(box);
+  });
 };
 
-document.getElementById(
-'ten'
-).onclick=()=>{
+document.getElementById('ten').onclick=()=>{
+  [...grid.children].forEach(box=>{
+    box.dataset.value=10;
+    update(box);
+  });
+};
 
+document.getElementById('clear').onclick=()=>{
+  grid.innerHTML='';
+};
+
+function exportFileName(ext){
+  const style=(document.getElementById('styleName').value.trim() ||
+    document.getElementById('styleTitle').textContent.trim() || 'Name')
+    .replace(/[\\/:*?"<>|]/g,'').trim() || 'Name';
+  return style+' - Concept.'+ext;
+}
+
+/* PNG: export title + stats mantendo o tamanho e estilo correto do nome */
+document.getElementById('savePng').onclick = async () => {
+  const button = document.getElementById('savePng');
+  if (button.disabled) return;
+  const oldText = button.textContent;
+  button.disabled = true;
+  button.textContent = 'Saving...';
+
+  let wrap = null;
+  try {
+    if (typeof html2canvas !== 'function') throw new Error('html2canvas missing');
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+
+    const appRect = app.getBoundingClientRect();
+    const width = Math.round(appRect.width);
+
+    /* Renderiza apenas os stats com html2canvas */
+    const stats = grid.cloneNode(true);
+    stats.querySelectorAll('.remove').forEach(x => x.remove());
+    stats.querySelectorAll('.fill').forEach(fill => {
+      fill.style.left = '3px';
+      fill.style.top = '3px';
+      fill.style.bottom = '3px';
+      fill.style.maxWidth = 'calc(100% - 6px)';
+    });
+
+    wrap = document.createElement('div');
+    wrap.style.cssText =
+      'position:absolute;left:-100000px;top:0;width:' + width +
+      'px;padding:0;background:transparent;';
+    wrap.appendChild(stats);
+    document.body.appendChild(wrap);
+
+    const scale = 3;
+    const statsCanvas = await html2canvas(wrap, {
+      backgroundColor: null,
+      scale: scale,
+      useCORS: true,
+      allowTaint: true,
+      logging: false
+    });
+
+    const title = document.getElementById('styleTitle');
+    const titleText = title.textContent || 'Name';
+    const cs = getComputedStyle(title);
+
+    /* Pega o tamanho real do título na tela e multiplica pela mesma escala do Canvas */
+    const originalFontSize = parseFloat(cs.fontSize) || 64;
+    const scaledFontSize = Math.round(originalFontSize * scale);
+    const titleH = Math.round(scaledFontSize * 1.5);
+
+    const out = document.createElement('canvas');
+    out.width = statsCanvas.width;
+    out.height = statsCanvas.height + titleH;
+    const ctx = out.getContext('2d');
+    ctx.clearRect(0, 0, out.width, out.height);
+
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    let fontFamily = cs.fontFamily || 'Arial';
+    let fontWeight = cs.fontWeight || '900';
+    let fontStyle = cs.fontStyle || 'normal';
+
+    ctx.font = fontStyle + ' ' + fontWeight + ' ' + scaledFontSize + 'px ' + fontFamily;
+    ctx.lineJoin = 'round';
+
+    const isGradient = title.classList.contains('title-gradient') ||
+                     title.classList.contains('title-custom-gradient');
+
+    const centerY = titleH / 2;
+
+    if (isGradient) {
+      if (title.classList.contains('title-custom-gradient')) {
+        const top = cs.getPropertyValue('--title-top').trim() || '#25ff00';
+        const bottom = cs.getPropertyValue('--title-bottom').trim() || '#396cff';
+        const g = ctx.createLinearGradient(0, centerY - scaledFontSize / 2, 0, centerY + scaledFontSize / 2);
+        g.addColorStop(0, top);
+        g.addColorStop(1, bottom);
+        ctx.fillStyle = g;
+      } else {
+        const g = ctx.createLinearGradient(0, 0, out.width, 0);
+        g.addColorStop(0, '#ff0000');
+        g.addColorStop(.14, '#ff7a00');
+        g.addColorStop(.28, '#fff000');
+        g.addColorStop(.42, '#25ff00');
+        g.addColorStop(.56, '#00d9ff');
+        g.addColorStop(.70, '#396cff');
+        g.addColorStop(.84, '#9d39ff');
+        g.addColorStop(1, '#ff00d9');
+        ctx.fillStyle = g;
+      }
+    } else {
+      ctx.fillStyle = cs.color || '#ffffff';
+    }
+
+    const stroke = 2 * scale;
+    if (stroke > 0 && !isGradient) {
+      ctx.lineWidth = stroke;
+      ctx.strokeStyle = cs.webkitTextStrokeColor || '#000000';
+      ctx.strokeText(titleText, out.width / 2, centerY);
+    }
+    ctx.fillText(titleText, out.width / 2, centerY);
+    ctx.restore();
+
+    ctx.drawImage(statsCanvas, 0, titleH);
+
+    const a = document.createElement('a');
+    a.download = exportFileName('png');
+    a.href = out.toDataURL('image/png');
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch (err) {
+    console.error(err);
+    alert('Não foi possível salvar a imagem.');
+  } finally {
+    if (wrap) wrap.remove();
+    button.disabled = false;
+    button.textContent = oldText;
+  }
+};
+
+/* Defaults */
 [
-...grid.children
-].forEach(box=>{
-
-box.dataset.value=10;
-
-update(box);
-
-});
-
-};
-
-document.getElementById(
-'clear'
-).onclick=()=>
-grid.innerHTML='';
-
-document.getElementById(
-'savePng'
-).onclick=async()=>{
-
-const button=
-document.getElementById(
-'savePng'
-);
-
-const oldText=
-button.textContent;
-
-button.textContent=
-'Saving...';
-
-button.disabled=true;
-
-try{
-
-const gridCanvas=
-await html2canvas(
-grid,
-{
-backgroundColor:null,
-scale:2,
-useCORS:true,
-logging:false
-}
-);
-
-const title=
-document.getElementById(
-'styleTitle'
-);
-
-const titleText=
-title.textContent||'Name';
-
-const titleHeight=72;
-
-const gap=14;
-
-const scale=2;
-
-const finalCanvas=
-document.createElement(
-'canvas'
-);
-
-finalCanvas.width=
-gridCanvas.width;
-
-finalCanvas.height=
-gridCanvas.height+
-(titleHeight+gap)*scale;
-
-const ctx=
-finalCanvas.getContext(
-'2d'
-);
-
-ctx.clearRect(
-0,
-0,
-finalCanvas.width,
-finalCanvas.height
-);
-
-ctx.save();
-
-ctx.textAlign='center';
-
-ctx.textBaseline='middle';
-
-const isUltra=
-title.classList.contains(
-'title-gradient'
-);
-
-const fontSize=
-46*scale;
-
-if(isUltra){
-
-ctx.font=
-'italic 300 '+
-fontSize+
-'px Arial';
-
-ctx.lineWidth=
-2*scale;
-
-ctx.strokeStyle=
-'#000000';
-
-ctx.strokeText(
-titleText,
-finalCanvas.width/2,
-(titleHeight*scale)/2
-);
-
-const gradient=
-ctx.createLinearGradient(
-0,
-0,
-finalCanvas.width,
-0
-);
-
-gradient.addColorStop(
-0,
-'#ff0000'
-);
-
-gradient.addColorStop(
-.14,
-'#ff7a00'
-);
-
-gradient.addColorStop(
-.28,
-'#fff000'
-);
-
-gradient.addColorStop(
-.42,
-'#25ff00'
-);
-
-gradient.addColorStop(
-.56,
-'#00d9ff'
-);
-
-gradient.addColorStop(
-.70,
-'#396cff'
-);
-
-gradient.addColorStop(
-.84,
-'#9d39ff'
-);
-
-gradient.addColorStop(
-1,
-'#ff00d9'
-);
-
-ctx.fillStyle=gradient;
-
-ctx.fillText(
-titleText,
-finalCanvas.width/2,
-(titleHeight*scale)/2
-);
-
-}else{
-
-ctx.font=
-'900 '+
-fontSize+
-'px Arial';
-
-ctx.lineWidth=
-2*scale;
-
-ctx.strokeStyle=
-'#000000';
-
-ctx.strokeText(
-titleText,
-finalCanvas.width/2,
-(titleHeight*scale)/2
-);
-
-ctx.fillStyle=
-title.style.color||
-'#ffffff';
-
-ctx.fillText(
-titleText,
-finalCanvas.width/2,
-(titleHeight*scale)/2
-);
-
-}
-
-ctx.restore();
-
-ctx.drawImage(
-gridCanvas,
-0,
-(titleHeight+gap)*scale
-);
-
-const link=
-document.createElement('a');
-
-link.download=
-'stats.png';
-
-link.href=
-finalCanvas.toDataURL(
-'image/png'
-);
-
-link.click();
-
-}catch(err){
-
-alert(
-'Could not save the image.'
-);
-
-console.error(err);
-
-}finally{
-
-button.textContent=
-oldText;
-
-button.disabled=false;
-
-}
-
-};
-
-[
-'BLOCK',
-'BUMP',
-'DIVE',
-'JUMP',
-'SERVE',
-'SET',
-'SPEED',
-'SPIKE'
-].forEach(
-x=>addBox(x,0)
-);
-
+  'Block','Bump','Dive','Jump',
+  'Serve','Set','Speed','Spike'
+].forEach(x=>addBox(x,5));
 </script>
-
 </body>
 </html>
