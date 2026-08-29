@@ -610,14 +610,25 @@ button:hover{
   }
 
   .fill{
-    left:5px;
-    top:5px;
-    bottom:5px;
+  position:absolute;
 
-    max-width:none;
+  left:5px;
+  top:5px;
+  bottom:5px;
 
-    border-radius:6px;
-  }
+  width:0;
+
+  border-radius:6px;
+
+  background:var(--color);
+
+  z-index:2;
+
+  pointer-events:none;
+
+  transform-origin:left center;
+  transform:scaleX(0.8);
+}
 
   .name{
     font-size:22px;
