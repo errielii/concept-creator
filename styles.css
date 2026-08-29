@@ -159,33 +159,11 @@ body{
   -webkit-text-fill-color:transparent;
 
   -webkit-text-stroke:2px #090817;
-
-  text-shadow:none;
 }
 
-#styleTitle.title-ultra{
-  font-family:Arial,sans-serif !important;
-
-  font-size:72px;
-
-  font-weight:700 !important;
+#styleTitle.title-ultra,
+#styleTitle.title-gradient{
   font-style:normal !important;
-
-  background:linear-gradient(
-    180deg,
-    #e0ddff 0%,
-    #a9a4ff 48%,
-    #7169d5 100%
-  );
-
-  -webkit-background-clip:text;
-  background-clip:text;
-
-  -webkit-text-fill-color:transparent;
-
-  -webkit-text-stroke:2px #090817;
-
-  text-shadow:none;
 }
 
 /* =========================
@@ -296,18 +274,14 @@ body{
 
   color:#fff;
 
-  /*
-    CONTORNO LIMPO
-    sem stroke + shadow duplicando
-  */
-
+  /* contorno limpo */
   -webkit-text-stroke:0;
 
   text-shadow:
-    -1px -1px 0 #000,
-     1px -1px 0 #000,
-    -1px  1px 0 #000,
-     1px  1px 0 #000;
+    1px 1px 0 #000,
+    -1px 1px 0 #000,
+    1px -1px 0 #000,
+    -1px -1px 0 #000;
 
   pointer-events:none;
 }
@@ -571,20 +545,6 @@ button:hover{
 }
 
 /* =========================
-   EXPORT
-========================= */
-
-#app.exporting .name{
-  -webkit-text-stroke:0 !important;
-
-  text-shadow:
-    -1px -1px 0 #000,
-     1px -1px 0 #000,
-    -1px  1px 0 #000,
-     1px  1px 0 #000 !important;
-}
-
-/* =========================
    MOBILE
 ========================= */
 
@@ -628,13 +588,6 @@ button:hover{
     border-radius:9px;
   }
 
-  /*
-    IMPORTANTE:
-    não colocar width:0 aqui
-    e não usar scaleX(0.8).
-    O JS controla diretamente a largura.
-  */
-
   .fill{
     position:absolute;
 
@@ -642,9 +595,7 @@ button:hover{
     top:5px;
     bottom:5px;
 
-    width:var(--fill-width,0%);
-
-    max-width:none;
+    width:0;
 
     border-radius:6px;
 
@@ -653,6 +604,9 @@ button:hover{
     z-index:2;
 
     pointer-events:none;
+
+    transform-origin:left center;
+    transform:scaleX(0.8);
   }
 
   .name{
@@ -661,10 +615,10 @@ button:hover{
     -webkit-text-stroke:0;
 
     text-shadow:
-      -1px -1px 0 #000,
-       1px -1px 0 #000,
-      -1px  1px 0 #000,
-       1px  1px 0 #000;
+      1px 1px 0 #000,
+      -1px 1px 0 #000,
+      1px -1px 0 #000,
+      -1px -1px 0 #000;
   }
 
   .remove{
