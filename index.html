@@ -3,9 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-<title>Concept Creator</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Roboto+Condensed:ital,wght@1,700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="styles.css">
+
+<title>Concept Creator</title>
 </head>
 
 <body>
@@ -16,6 +21,7 @@
   <div id="grid"></div>
 
   <div id="controls">
+
     <div class="row">
       <input id="styleName" type="text" value="Name" placeholder="Style name">
       <button id="applyName">Apply</button>
@@ -27,19 +33,38 @@
 
       <button id="gradientName">Ultra</button>
       <button id="titleGradient">Title Gradient</button>
-      <input id="titleGradientTop" type="color" value="#25ff00" title="Gradient top">
-      <input id="titleGradientBottom" type="color" value="#396cff" title="Gradient bottom">
+
+      <input id="titleGradientTop"
+             type="color"
+             value="#25ff00"
+             title="Gradient top">
+
+      <input id="titleGradientBottom"
+             type="color"
+             value="#396cff"
+             title="Gradient bottom">
     </div>
 
     <div class="row">
-      <input id="statName" type="text" placeholder="Stat name">
-      <input id="statValue" type="number" min="0" max="10" step="0.1" value="5">
+      <input id="statName"
+             type="text"
+             placeholder="Stat name">
+
+      <input id="statValue"
+             type="number"
+             min="0"
+             max="10"
+             step="0.1"
+             value="5">
+
       <button id="add">+ Stat</button>
     </div>
 
     <div class="row">
       <button id="rainbowMode">Rainbow</button>
-      <span id="rainbowHint" class="small">Click Rainbow, then click a stat</span>
+      <span id="rainbowHint" class="small">
+        Click Rainbow, then click a stat
+      </span>
     </div>
 
     <div class="row">
@@ -47,12 +72,13 @@
       <button id="ten">All 10/10</button>
       <button id="clear">Clear all</button>
       <button id="savePng">Save PNG</button>
-      <button id="saveGif">Save GIF</button>
     </div>
 
     <div class="small">
-      Scale: 0–1.9 red · 2–4.9 orange · 5–7.9 yellow · 8–9.9 green · 10/10 pink.
+      Scale: 0–1.9 red · 2–4.9 orange · 5–7.9 yellow ·
+      8–9.9 green · 10/10 pink.
     </div>
+
   </div>
 </div>
 
@@ -60,5 +86,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
 
 <script src="script.js"></script>
+
 </body>
 </html>
