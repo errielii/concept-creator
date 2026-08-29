@@ -133,14 +133,23 @@ body{
   justify-content:center;
   z-index:3;
   padding:0 18px;
+
   font-family:'Roboto Condensed',Arial,sans-serif !important;
-  font-size:39px;
+  font-size:44px;
   line-height:1;
   font-weight:500 !important;
   font-style:italic !important;
+
   color:#fff;
   -webkit-text-stroke:2px #000;
-  text-shadow:none;
+  paint-order:stroke fill;
+
+  text-shadow:
+    1px 1px 0 #000,
+    -1px 1px 0 #000,
+    1px -1px 0 #000,
+    -1px -1px 0 #000;
+
   pointer-events:none;
 }
 
@@ -165,7 +174,7 @@ body{
   to{background-position:250% 0}
 }
 
-/* RAINBOW */
+/* RAINBOW: outline only, with a tiny gap before the normal stat fill */
 .box.rainbow-border{
   border-color:transparent !important;
   background:transparent !important;
@@ -194,12 +203,10 @@ body{
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite:xor;
-
   mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   mask-composite:exclude;
-
   padding:4px;
   pointer-events:none;
   z-index:4;
@@ -237,7 +244,7 @@ body{
 }
 
 .box.rainbow-border .fill,
-.box[data-rainbow="true"] .fill{
+.box[data-rainbow="true"] .fill {
   background:linear-gradient(
     90deg,
     #ff0000 0%,
@@ -249,7 +256,17 @@ body{
     #9d39ff 84%,
     #ff00d9 100%
   ) !important;
-
+  background-image:linear-gradient(
+    90deg,
+    #ff0000 0%,
+    #ff7a00 14%,
+    #fff000 28%,
+    #25ff00 42%,
+    #00d9ff 56%,
+    #396cff 70%,
+    #9d39ff 84%,
+    #ff00d9 100%
+  ) !important;
   background-size:100% 100% !important;
   background-repeat:no-repeat !important;
   animation:none !important;
@@ -357,7 +374,6 @@ button:hover{
 
 /* MOBILE */
 @media(max-width:900px),(pointer:coarse){
-
   body{
     padding:24px 10px;
   }
@@ -399,7 +415,7 @@ button:hover{
 
   .name{
     font-family:'Roboto Condensed',Arial,sans-serif !important;
-    font-size:34px;
+    font-size:38px;
     font-weight:500 !important;
     font-style:italic !important;
   }
@@ -422,7 +438,7 @@ html.mobile-device #grid{
   grid-template-columns:repeat(2,minmax(0,1fr)) !important;
 }
 
-/* DRAGGING */
+/* Prevent accidental text selection while dragging. */
 .dragging,
 .dragging *{
   user-select:none !important;
@@ -436,7 +452,6 @@ html.mobile-device #grid{
   top:3px !important;
   bottom:3px !important;
   max-width:calc(100% - 6px) !important;
-
   background:linear-gradient(
     90deg,
     #ff0000 0%,
@@ -448,6 +463,5 @@ html.mobile-device #grid{
     #9d39ff 84%,
     #ff00d9 100%
   ) !important;
-
   background-size:100% 100% !important;
 }
