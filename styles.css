@@ -133,11 +133,11 @@ body{
   justify-content:center;
   z-index:3;
   padding:0 18px;
-  font-family:Georgia,"Times New Roman",serif;
+  font-family:Arial,sans-serif !important;
   font-size:39px;
   line-height:1;
   font-weight:900;
-  font-style:normal;
+  font-style:italic !important;
   color:#fff;
   -webkit-text-stroke:2px #000;
   text-shadow:none;
@@ -165,7 +165,7 @@ body{
   to{background-position:250% 0}
 }
 
-/* RAINBOW: outline only, with a tiny gap before the normal stat fill */
+/* RAINBOW */
 .box.rainbow-border{
   border-color:transparent !important;
   background:transparent !important;
@@ -178,26 +178,30 @@ body{
   border-radius:27px;
   background:linear-gradient(
     90deg,
-    #ff0000 0%,
-    #ff7a00 14%,
-    #fff000 28%,
-    #25ff00 42%,
-    #00d9ff 56%,
-    #396cff 70%,
-    #9d39ff 84%,
-    #ff00d9 100%
+    #ff0000,
+    #ff7a00,
+    #fff000,
+    #25ff00,
+    #00d9ff,
+    #396cff,
+    #9d39ff,
+    #ff00d9,
+    #ff0000
   );
-  background-size:100% 100%;
-  background-position:0 0;
-  
+  background-size:300% 100%;
+  background-position:var(--gif-rainbow-pos,0%) 0;
+  animation:outlineRainbow 2.4s linear infinite;
+
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite:xor;
+
   mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   mask-composite:exclude;
+
   padding:4px;
   pointer-events:none;
   z-index:4;
@@ -208,22 +212,30 @@ body{
   z-index:5;
 }
 
+@keyframes outlineRainbow{
+  to{background-position:300% 0}
+}
+
 .box.rainbow-border .fill{
-  background-image:linear-gradient(
+  background:linear-gradient(
     90deg,
-    #ff0000 0%,
-    #ff7a00 14%,
-    #fff000 28%,
-    #25ff00 42%,
-    #00d9ff 56%,
-    #396cff 70%,
-    #9d39ff 84%,
-    #ff00d9 100%
+    #ff0000,
+    #ff7a00,
+    #fff000,
+    #25ff00,
+    #00d9ff,
+    #396cff,
+    #9d39ff,
+    #ff00d9,
+    #ff0000
   ) !important;
-  background-color:transparent !important;
-  background-size:100% 100% !important;
-  background-repeat:no-repeat !important;
-  animation:none !important;
+  background-size:300% 100% !important;
+  background-position:var(--gif-rainbow-pos,0%) 0 !important;
+  animation:fillRainbow 2.4s linear infinite;
+}
+
+@keyframes fillRainbow{
+  to{background-position:300% 0}
 }
 
 .fill{
@@ -232,35 +244,6 @@ body{
   bottom:6px !important;
   max-width:calc(100% - 12px) !important;
   border-radius:17px !important;
-}
-
-.box.rainbow-border .fill,
-.box[data-rainbow="true"] .fill {
-  background: linear-gradient(
-    90deg,
-    #ff0000 0%,
-    #ff7a00 14%,
-    #fff000 28%,
-    #25ff00 42%,
-    #00d9ff 56%,
-    #396cff 70%,
-    #9d39ff 84%,
-    #ff00d9 100%
-  ) !important;
-  background-image: linear-gradient(
-    90deg,
-    #ff0000 0%,
-    #ff7a00 14%,
-    #fff000 28%,
-    #25ff00 42%,
-    #00d9ff 56%,
-    #396cff 70%,
-    #9d39ff 84%,
-    #ff00d9 100%
-  ) !important;
-  background-size: 100% 100% !important;
-  background-repeat: no-repeat !important;
-  animation: none !important;
 }
 
 .remove{
@@ -429,24 +412,4 @@ html.mobile-device #grid{
 .dragging *{
   user-select:none !important;
   -webkit-user-select:none !important;
-}
-
-.export-wrap .box.rainbow-border .fill,
-.box.rainbow-border .fill{
-  left:3px !important;
-  top:3px !important;
-  bottom:3px !important;
-  max-width:calc(100% - 6px) !important;
-  background:linear-gradient(
-    90deg,
-    #ff0000 0%,
-    #ff7a00 14%,
-    #fff000 28%,
-    #25ff00 42%,
-    #00d9ff 56%,
-    #396cff 70%,
-    #9d39ff 84%,
-    #ff00d9 100%
-  ) !important;
-  background-size:100% 100% !important;
 }
