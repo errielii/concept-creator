@@ -134,11 +134,11 @@ body{
   justify-content:center;
   z-index:3;
   padding:0 18px;
-  font-family:Arial,sans-serif;
+  font-family:Arial,sans-serif !important;
   font-size:39px;
   line-height:1;
   font-weight:900;
-  font-style:italic;
+  font-style:italic !important;
   color:#fff;
   -webkit-text-stroke:2px #000;
   text-shadow:none;
