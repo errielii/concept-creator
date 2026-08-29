@@ -1,3 +1,4 @@
+```js
 const grid=document.getElementById('grid');
 const app=document.getElementById('app');
 
@@ -45,6 +46,11 @@ function addBox(name,value=5){
   const text=document.createElement('div');
   text.className='name';
   text.textContent=name;
+
+  // STAT FONT: ARIAL ITALIC
+  text.style.fontFamily='Arial, sans-serif';
+  text.style.fontStyle='italic';
+  text.style.fontWeight='900';
 
   const remove=document.createElement('button');
   remove.className='remove';
@@ -222,6 +228,14 @@ document.getElementById('savePng').onclick = async () => {
     /* Renderiza apenas os stats com html2canvas */
     const stats = grid.cloneNode(true);
     stats.querySelectorAll('.remove').forEach(x => x.remove());
+
+    /* FORÇA ARIAL ITALIC TAMBÉM NO PNG */
+    stats.querySelectorAll('.name').forEach(text => {
+      text.style.fontFamily='Arial, sans-serif';
+      text.style.fontStyle='italic';
+      text.style.fontWeight='900';
+    });
+
     stats.querySelectorAll('.fill').forEach(fill => {
       fill.style.left = '3px';
       fill.style.top = '3px';
@@ -306,6 +320,7 @@ document.getElementById('savePng').onclick = async () => {
       ctx.strokeStyle = cs.webkitTextStrokeColor || '#000000';
       ctx.strokeText(titleText, out.width / 2, centerY);
     }
+
     ctx.fillText(titleText, out.width / 2, centerY);
     ctx.restore();
 
@@ -317,6 +332,7 @@ document.getElementById('savePng').onclick = async () => {
     document.body.appendChild(a);
     a.click();
     a.remove();
+
   } catch (err) {
     console.error(err);
     alert('Não foi possível salvar a imagem.');
@@ -332,3 +348,4 @@ document.getElementById('savePng').onclick = async () => {
   'Block','Bump','Dive','Jump',
   'Serve','Set','Speed','Spike'
 ].forEach(x=>addBox(x,5));
+```
