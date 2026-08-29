@@ -451,11 +451,6 @@ html.mobile-device #grid{
   ) !important;
   background-size:100% 100% !important;
 }
-#grid .name{
-  font-family: Arial, sans-serif !important;
-  font-style: italic !important;
-  color: red !important;
-  font-size: 50px !important;
-}
+
 ```
 
