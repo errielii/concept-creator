@@ -6,11 +6,12 @@
 
 :root{
   --bg:#020d17;
-  --panel:#020d17;
+  --panel:#06121e;
   --line:#1c3040;
 }
 
-html,body{
+html,
+body{
   margin:0;
   min-height:100%;
   background:var(--bg);
@@ -37,8 +38,10 @@ body{
 
 #styleTitle{
   position:relative;
+
   margin:0;
   padding-top:0;
+
   height:125px;
 
   display:flex;
@@ -48,10 +51,12 @@ body{
   font-family:Arial,sans-serif;
   font-size:72px;
   line-height:1;
+
   font-weight:700;
   font-style:normal;
 
   color:#aaa5ff;
+
   -webkit-text-stroke:2px #080812;
 
   text-shadow:
@@ -61,17 +66,21 @@ body{
   z-index:20;
 }
 
-/* linha embaixo do nome */
+/* linha abaixo do nome */
 
 #styleTitle::after{
   content:"";
+
   position:absolute;
+
   width:440px;
   max-width:70%;
+
   height:3px;
 
   left:50%;
   bottom:28px;
+
   transform:translateX(-50%);
 
   background:linear-gradient(
@@ -90,6 +99,7 @@ body{
 
 #styleTitle::before{
   content:"✦";
+
   position:absolute;
 
   right:-5px;
@@ -100,12 +110,14 @@ body{
   line-height:1;
 
   color:#9c48ff;
+
   text-shadow:
     0 0 8px #9c48ff,
     0 0 22px #7200ff,
     0 0 45px #4500a8;
 
   transform:rotate(-10deg);
+
   z-index:-1;
 }
 
@@ -115,6 +127,7 @@ body{
 
 #styleTitle.title-gradient{
   font-family:Arial,sans-serif !important;
+
   font-size:72px;
 
   font-weight:700 !important;
@@ -129,6 +142,7 @@ body{
 
   -webkit-background-clip:text;
   background-clip:text;
+
   -webkit-text-fill-color:transparent;
 
   -webkit-text-stroke:2px #090817;
@@ -145,6 +159,7 @@ body{
 
   -webkit-background-clip:text;
   background-clip:text;
+
   -webkit-text-fill-color:transparent;
 
   -webkit-text-stroke:2px #090817;
@@ -166,7 +181,9 @@ body{
   margin:0 auto;
 
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
 
   column-gap:8px;
   row-gap:7px;
@@ -193,6 +210,7 @@ body{
   background:#020a11;
 
   border:2px solid var(--color);
+
   border-radius:10px;
 
   cursor:grab;
@@ -249,6 +267,9 @@ body{
 
   padding:0 12px;
 
+  /*
+    ESSA É A FONTE DA FOTO
+  */
   font-family:'Roboto Condensed',Arial,sans-serif !important;
 
   font-size:24px;
@@ -301,7 +322,7 @@ body{
   }
 }
 
-/* rainbow border */
+/* Rainbow border */
 
 .box.rainbow-border{
   border-color:transparent !important;
@@ -368,6 +389,7 @@ body{
   ) !important;
 
   background-size:100% 100% !important;
+
   background-repeat:no-repeat !important;
 
   animation:none !important;
@@ -477,7 +499,9 @@ input[type=number]{
 input[type=color]{
   width:46px !important;
   min-width:46px;
+
   height:36px;
+
   padding:3px;
 }
 
@@ -513,6 +537,16 @@ button:hover{
 .small{
   font-size:12px;
   color:#8e9aaa;
+}
+
+/* =========================
+   DRAGGING
+========================= */
+
+.dragging,
+.dragging *{
+  user-select:none !important;
+  -webkit-user-select:none !important;
 }
 
 /* =========================
@@ -575,7 +609,7 @@ button:hover{
 
   .remove{
     display:block;
-    right:-27px;
+    right:-26px;
   }
 
   #controls{
@@ -583,34 +617,6 @@ button:hover{
   }
 
   input[type=number]{
-    width:90px;
+    width:100px;
   }
-}
-
-html.mobile-device #grid{
-  grid-template-columns:
-    repeat(2,minmax(0,1fr)) !important;
-}
-
-/* =========================
-   DRAGGING
-========================= */
-
-.dragging,
-.dragging *{
-  user-select:none !important;
-  -webkit-user-select:none !important;
-}
-
-/* =========================
-   EXPORT
-========================= */
-
-.export-wrap .box.rainbow-border .fill,
-.box.rainbow-border .fill{
-  left:3px !important;
-  top:3px !important;
-  bottom:3px !important;
-
-  max-width:calc(100% - 6px) !important;
 }
