@@ -1,3 +1,4 @@
+```css
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&display=swap');
 
 *{box-sizing:border-box}
@@ -112,7 +113,7 @@ body{
   box-shadow:none;
 }
 
- .fill{
+.fill{
   position:absolute;
   left:6px;
   top:6px;
@@ -133,11 +134,11 @@ body{
   justify-content:center;
   z-index:3;
   padding:0 18px;
-  font-family:Georgia,"Times New Roman",serif;
+  font-family:Arial,sans-serif;
   font-size:39px;
   line-height:1;
   font-weight:900;
-  font-style:normal;
+  font-style:italic;
   color:#fff;
   -webkit-text-stroke:2px #000;
   text-shadow:none;
@@ -170,6 +171,7 @@ body{
   border-color:transparent !important;
   background:transparent !important;
 }
+
 .box.rainbow-border::before{
   content:"";
   position:absolute;
@@ -188,7 +190,7 @@ body{
   );
   background-size:100% 100%;
   background-position:0 0;
-  
+
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -201,6 +203,7 @@ body{
   pointer-events:none;
   z-index:4;
 }
+
 .box.rainbow-border .fill,
 .box.rainbow-border .name{
   z-index:5;
@@ -234,7 +237,7 @@ body{
 
 .box.rainbow-border .fill,
 .box[data-rainbow="true"] .fill {
-  background: linear-gradient(
+  background:linear-gradient(
     90deg,
     #ff0000 0%,
     #ff7a00 14%,
@@ -245,7 +248,7 @@ body{
     #9d39ff 84%,
     #ff00d9 100%
   ) !important;
-  background-image: linear-gradient(
+  background-image:linear-gradient(
     90deg,
     #ff0000 0%,
     #ff7a00 14%,
@@ -256,9 +259,9 @@ body{
     #9d39ff 84%,
     #ff00d9 100%
   ) !important;
-  background-size: 100% 100% !important;
-  background-repeat: no-repeat !important;
-  animation: none !important;
+  background-size:100% 100% !important;
+  background-repeat:no-repeat !important;
+  animation:none !important;
 }
 
 .remove{
@@ -448,3 +451,4 @@ html.mobile-device #grid{
   ) !important;
   background-size:100% 100% !important;
 }
+```
