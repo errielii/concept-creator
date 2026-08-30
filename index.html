@@ -47,10 +47,8 @@ body{
 
 #styleTitle{
   position:relative;
-
   margin:0;
   padding-top:0;
-
   height:125px;
 
   display:flex;
@@ -77,12 +75,10 @@ body{
 
 #styleTitle::after{
   content:"";
-
   position:absolute;
 
   width:440px;
   max-width:70%;
-
   height:3px;
 
   left:50%;
@@ -114,7 +110,6 @@ body{
   font-family:Arial,sans-serif !important;
 
   font-size:72px;
-
   font-weight:700 !important;
   font-style:normal !important;
 
@@ -127,9 +122,7 @@ body{
 
   -webkit-background-clip:text;
   background-clip:text;
-
   -webkit-text-fill-color:transparent;
-
   -webkit-text-stroke:0;
 
   text-shadow:none;
@@ -144,23 +137,20 @@ body{
 
   -webkit-background-clip:text;
   background-clip:text;
-
   -webkit-text-fill-color:transparent;
-
   -webkit-text-stroke:0;
 
   text-shadow:none;
 }
 
 /* =========================
-   ULTRA
+   ULTRA RGB
 ========================= */
 
 #styleTitle.title-ultra{
   font-family:'Orbitron',Arial,sans-serif !important;
 
   font-size:72px;
-
   font-weight:900 !important;
   font-style:italic !important;
 
@@ -178,16 +168,26 @@ body{
     #ff00d9 100%
   );
 
-  background-size:100% 100%;
+  background-size:200% 100%;
 
   -webkit-background-clip:text;
   background-clip:text;
-
   -webkit-text-fill-color:transparent;
-
   -webkit-text-stroke:0;
 
+  animation:titleRGB 3s linear infinite;
+
   text-shadow:none;
+}
+
+@keyframes titleRGB{
+  0%{
+    background-position:0% 50%;
+  }
+
+  100%{
+    background-position:200% 50%;
+  }
 }
 
 /* =========================
@@ -294,7 +294,6 @@ body{
   line-height:1;
 
   font-weight:700;
-
   font-style:italic !important;
 
   color:#fff;
@@ -412,9 +411,7 @@ body{
   ) !important;
 
   background-size:100% 100% !important;
-
   background-repeat:no-repeat !important;
-
   animation:none !important;
 }
 
@@ -440,11 +437,9 @@ body{
   padding:0;
 
   border:0;
-
   border-radius:50%;
 
   background:#000c;
-
   color:#fff;
 
   font:700 14px Arial;
@@ -897,6 +892,13 @@ function update(box){
       ? 'linear-gradient(90deg,#ff0000,#ff7a00,#fff000,#25ff00,#00d9ff,#396cff,#9d39ff,#ff00d9)'
       : c;
 
+  /*
+    AGORA 10 = 100%.
+
+    Antes existia * 0.8 aqui,
+    fazendo a barra parar em 80%.
+  */
+
   const available =
     Math.max(
       0,
@@ -906,7 +908,7 @@ function update(box){
   const fillWidth =
     Math.min(
       available,
-      available * (v / 10) * 0.8
+      available * (v / 10)
     );
 
   fill.style.left =
@@ -1201,7 +1203,7 @@ document.getElementById(
 
 
 /* =========================
-   ULTRA
+   ULTRA RGB
 ========================= */
 
 document.getElementById(
@@ -1561,6 +1563,7 @@ document.getElementById(
         )
       ];
 
+
     const clones =
       [
         ...stats.querySelectorAll(
@@ -1591,6 +1594,11 @@ document.getElementById(
           );
 
 
+        /*
+          MESMA CORREÇÃO NO EXPORT:
+          10 = 100%, sem * 0.8
+        */
+
         const available =
           Math.max(
             0,
@@ -1602,8 +1610,7 @@ document.getElementById(
           Math.min(
             available,
             available *
-            (v / 10) *
-            0.8
+            (v / 10)
           );
 
 
@@ -1711,7 +1718,7 @@ document.getElementById(
 
     /* =========================
        TITLE
-    ========================= */
+========================= */
 
     const title =
       document.getElementById(
@@ -1750,7 +1757,7 @@ document.getElementById(
 
     /* =========================
        FINAL CANVAS
-    ========================= */
+========================= */
 
     const out =
       document.createElement(
@@ -1779,7 +1786,7 @@ document.getElementById(
 
     /* =========================
        TITLE
-    ========================= */
+========================= */
 
     ctx.save();
 
@@ -1830,8 +1837,8 @@ document.getElementById(
 
 
     /* =========================
-       ULTRA RAINBOW
-    ========================= */
+       ULTRA RGB EXPORT
+========================= */
 
     if(isUltra){
 
@@ -1999,9 +2006,9 @@ document.getElementById(
     }
 
 
-    /*
-      contorno do título
-    */
+    /* =========================
+       TITLE OUTLINE
+========================= */
 
     ctx.lineWidth =
       2 * scale;
@@ -2028,7 +2035,7 @@ document.getElementById(
 
     /* =========================
        STATS
-    ========================= */
+========================= */
 
     ctx.drawImage(
       statsCanvas,
@@ -2039,7 +2046,7 @@ document.getElementById(
 
     /* =========================
        DOWNLOAD
-    ========================= */
+========================= */
 
     const a =
       document.createElement(
