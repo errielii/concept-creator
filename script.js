@@ -1,92 +1,137 @@
-const grid = document.getElementById('grid');
-const app = document.getElementById('app');
+/* Concept Creator revision: 2026-08-29 */
+
+const grid=document.getElementById('grid');
+const app=document.getElementById('app');
 
 if(
   window.matchMedia('(pointer:coarse)').matches ||
-  Math.min(window.innerWidth,screen.width) <= 900
+  Math.min(window.innerWidth,screen.width)<=900
 ){
   document.documentElement.classList.add('mobile-device');
 }
 
-let dragging = null;
-let rainbowMode = false;
+let dragging=null;
+let rainbowMode=false;
+
+
+/* =========================
+   COLORS
+========================= */
 
 function color(v){
-  if(v >= 10) return '#ff00d9';
-  if(v >= 8) return '#25ff00';
-  if(v >= 5) return '#fff000';
-  if(v >= 2) return '#ff7a00';
+  if(v>=10)return '#ff00d9';
+  if(v>=8)return '#25ff00';
+  if(v>=5)return '#fff000';
+  if(v>=2)return '#ff7a00';
   return '#ff0000';
 }
 
+
+/* =========================
+   UPDATE STAT
+========================= */
+
 function update(box){
 
-  const v = Number(box.dataset.value) || 0;
+  const v=Math.max(
+    0,
+    Math.min(
+      10,
+      Number(box.dataset.value)||0
+    )
+  );
 
-  const c = color(v);
+  const c=color(v);
+
+  box.dataset.value=v;
 
   box.style.setProperty('--color',c);
 
-  const fill = box.querySelector('.fill');
+  const fill=box.querySelector('.fill');
 
-  const rainbow = box.dataset.rainbow === 'true';
+  const rainbow=
+    box.dataset.rainbow==='true';
 
   fill.classList.remove('rainbow');
 
-  fill.style.background = c;
+  fill.style.background=c;
 
   box.classList.toggle(
     'rainbow-border',
     rainbow
   );
 
-  fill.style.width =
-    (v / 10 * 100) + '%';
+  /*
+    IMPORTANTE:
+
+    A barra inteira fica dentro do box.
+    O valor controla apenas scaleX.
+
+    0 = 0%
+    5 = 50%
+    10 = 100%
+
+    Assim ela nunca passa da borda.
+  */
+
+  fill.style.setProperty(
+    '--fill-scale',
+    String(v/10)
+  );
 }
+
+
+/* =========================
+   ADD STAT
+========================= */
 
 function addBox(name,value=5){
 
-  const box = document.createElement('div');
+  const box=document.createElement('div');
 
-  box.className = 'box';
+  box.className='box';
 
-  box.dataset.name = name;
+  box.dataset.name=name;
 
-  box.dataset.value =
-    Math.max(
-      0,
-      Math.min(
-        10,
-        Number(value) || 5
-      )
-    );
+  box.dataset.value=Math.max(
+    0,
+    Math.min(
+      10,
+      Number(value)||5
+    )
+  );
 
-  box.dataset.rainbow = 'false';
+  box.dataset.rainbow='false';
 
-  const fill = document.createElement('div');
 
-  fill.className = 'fill';
+  const fill=document.createElement('div');
 
-  const text = document.createElement('div');
+  fill.className='fill';
 
-  text.className = 'name';
 
-  text.textContent = name;
+  const text=document.createElement('div');
 
-  const remove = document.createElement('button');
+  text.className='name';
 
-  remove.className = 'remove';
+  text.textContent=name;
 
-  remove.textContent = '×';
 
-  remove.title = 'Remove stat';
+  const remove=document.createElement('button');
 
-  remove.onclick = e => {
+  remove.className='remove';
+
+  remove.textContent='×';
+
+  remove.title='Remove stat';
+
+
+  remove.onclick=e=>{
 
     e.stopPropagation();
 
     box.remove();
   };
+
 
   box.append(
     fill,
@@ -98,38 +143,52 @@ function addBox(name,value=5){
 
   update(box);
 
+
+  /* POINTER DOWN */
+
   box.addEventListener(
     'pointerdown',
-    e => {
+    e=>{
 
       if(
-        e.target === remove ||
+        e.target===remove ||
         rainbowMode
-      ) return;
+      ){
+        return;
+      }
 
       e.preventDefault();
 
-      dragging = box;
+      dragging=box;
 
-      app.classList.add('dragging');
+      app.classList.add(
+        'dragging'
+      );
 
-      box.style.cursor = 'grabbing';
+      box.style.cursor='grabbing';
+
 
       try{
+
         box.setPointerCapture(
           e.pointerId
         );
+
       }catch(_){}
+
 
       setValue(e);
     }
   );
 
+
+  /* POINTER MOVE */
+
   box.addEventListener(
     'pointermove',
-    e => {
+    e=>{
 
-      if(dragging === box){
+      if(dragging===box){
 
         e.preventDefault();
 
@@ -138,30 +197,36 @@ function addBox(name,value=5){
     }
   );
 
+
+  /* POINTER UP */
+
   box.addEventListener(
     'pointerup',
-    () => {
+    ()=>{
 
-      if(dragging === box){
+      if(dragging===box){
 
-        dragging = null;
+        dragging=null;
 
         app.classList.remove(
           'dragging'
         );
 
-        box.style.cursor = 'grab';
+        box.style.cursor='grab';
       }
     }
   );
 
+
+  /* POINTER CANCEL */
+
   box.addEventListener(
     'pointercancel',
-    () => {
+    ()=>{
 
-      if(dragging === box){
+      if(dragging===box){
 
-        dragging = null;
+        dragging=null;
 
         app.classList.remove(
           'dragging'
@@ -171,32 +236,40 @@ function addBox(name,value=5){
   );
 }
 
+
+/* =========================
+   SET VALUE
+========================= */
+
 function setValue(e){
 
-  if(!dragging) return;
+  if(!dragging)return;
 
-  const r =
+  const r=
     dragging.getBoundingClientRect();
 
-  const v =
-    Math.max(
-      0,
-      Math.min(
-        10,
-        ((e.clientX - r.left) / r.width) * 10
-      )
-    );
+  const v=Math.max(
+    0,
+    Math.min(
+      10,
+      ((e.clientX-r.left)/r.width)*10
+    )
+  );
 
-  dragging.dataset.value = v;
+  dragging.dataset.value=v;
 
   update(dragging);
 }
 
+
+/* =========================
+   GLOBAL POINTER UP
+========================= */
+
 document.addEventListener(
   'pointerup',
-  () => {
-
-    dragging = null;
+  ()=>{
+    dragging=null;
 
     app.classList.remove(
       'dragging'
@@ -204,30 +277,34 @@ document.addEventListener(
   }
 );
 
+
 /* =========================
    TITLE
 ========================= */
 
 document.getElementById(
   'applyName'
-).onclick = () => {
+).onclick=()=>{
 
-  const value =
-    document.getElementById(
-      'styleName'
-    ).value.trim();
+  const value=
+    document
+      .getElementById('styleName')
+      .value
+      .trim();
 
   document.getElementById(
     'styleTitle'
-  ).textContent =
-    value || 'Name';
+  ).textContent=value||'Name';
 };
+
+
+/* TITLE COLOR */
 
 document.getElementById(
   'titleColor'
-).oninput = e => {
+).oninput=e=>{
 
-  const title =
+  const title=
     document.getElementById(
       'styleTitle'
     );
@@ -237,20 +314,23 @@ document.getElementById(
     'title-custom-gradient'
   );
 
-  title.style.color =
-    e.target.value || '#fff';
+  title.style.color=
+    e.target.value||'#fff';
 
-  title.style.webkitTextFillColor = '';
+  title.style.webkitTextFillColor='';
 
-  title.style.webkitTextStroke =
+  title.style.webkitTextStroke=
     '2px #000';
 };
 
+
+/* ULTRA */
+
 document.getElementById(
   'gradientName'
-).onclick = () => {
+).onclick=()=>{
 
-  const title =
+  const title=
     document.getElementById(
       'styleTitle'
     );
@@ -264,29 +344,33 @@ document.getElementById(
   );
 };
 
-const titleGradient =
+
+/* CUSTOM TITLE GRADIENT */
+
+const titleGradient=
   document.getElementById(
     'titleGradient'
   );
 
-const titleGradientTop =
+const titleGradientTop=
   document.getElementById(
     'titleGradientTop'
   );
 
-const titleGradientBottom =
+const titleGradientBottom=
   document.getElementById(
     'titleGradientBottom'
   );
 
-titleGradient.onclick = () => {
 
-  const title =
+titleGradient.onclick=()=>{
+
+  const title=
     document.getElementById(
       'styleTitle'
     );
 
-  const active =
+  const active=
     title.classList.toggle(
       'title-custom-gradient'
     );
@@ -294,6 +378,7 @@ titleGradient.onclick = () => {
   title.classList.remove(
     'title-gradient'
   );
+
 
   if(active){
 
@@ -309,14 +394,15 @@ titleGradient.onclick = () => {
   }
 };
 
+
 [
   titleGradientTop,
   titleGradientBottom
-].forEach(input => {
+].forEach(input=>{
 
-  input.oninput = () => {
+  input.oninput=()=>{
 
-    const title =
+    const title=
       document.getElementById(
         'styleTitle'
       );
@@ -333,21 +419,22 @@ titleGradient.onclick = () => {
   };
 });
 
+
 /* =========================
-   ADD STAT
+   ADD
 ========================= */
 
 document.getElementById(
   'add'
-).onclick = () => {
+).onclick=()=>{
 
-  const name =
-    document.getElementById(
-      'statName'
-    ).value.trim() ||
-    'NEW STAT';
+  const name=
+    document
+      .getElementById('statName')
+      .value
+      .trim()||'NEW STAT';
 
-  const value =
+  const value=
     document.getElementById(
       'statValue'
     ).value;
@@ -359,57 +446,62 @@ document.getElementById(
 
   document.getElementById(
     'statName'
-  ).value = '';
+  ).value='';
 
   document.getElementById(
     'statValue'
-  ).value = 5;
+  ).value=5;
 };
+
 
 /* =========================
    RAINBOW
 ========================= */
 
-const rainbowButton =
+const rainbowButton=
   document.getElementById(
     'rainbowMode'
   );
 
-const rainbowHint =
+const rainbowHint=
   document.getElementById(
     'rainbowHint'
   );
 
-rainbowButton.onclick = () => {
 
-  rainbowMode = !rainbowMode;
+rainbowButton.onclick=()=>{
+
+  rainbowMode=!rainbowMode;
 
   rainbowButton.classList.toggle(
     'active',
     rainbowMode
   );
 
-  rainbowHint.textContent =
+  rainbowHint.textContent=
     rainbowMode
       ? 'Now click a stat to enable/disable Rainbow'
       : 'Click Rainbow, then click a stat';
 };
 
+
 grid.addEventListener(
   'click',
-  e => {
+  e=>{
 
-    const box =
+    const box=
       e.target.closest('.box');
 
     if(
       !box ||
       e.target.closest('.remove') ||
       !rainbowMode
-    ) return;
+    ){
+      return;
+    }
 
-    box.dataset.rainbow =
-      box.dataset.rainbow === 'true'
+    box.dataset.rainbow=
+      box.dataset.rainbow==='true'
         ? 'false'
         : 'true';
 
@@ -417,44 +509,56 @@ grid.addEventListener(
   }
 );
 
+
 /* =========================
    RESET
 ========================= */
 
 document.getElementById(
   'zero'
-).onclick = () => {
+).onclick=()=>{
 
   [
     ...grid.children
-  ].forEach(box => {
+  ].forEach(box=>{
 
-    box.dataset.value = 0;
+    box.dataset.value=0;
 
     update(box);
   });
 };
+
+
+/* =========================
+   ALL 10
+========================= */
 
 document.getElementById(
   'ten'
-).onclick = () => {
+).onclick=()=>{
 
   [
     ...grid.children
-  ].forEach(box => {
+  ].forEach(box=>{
 
-    box.dataset.value = 10;
+    box.dataset.value=10;
 
     update(box);
   });
 };
 
+
+/* =========================
+   CLEAR
+========================= */
+
 document.getElementById(
   'clear'
-).onclick = () => {
+).onclick=()=>{
 
-  grid.innerHTML = '';
+  grid.innerHTML='';
 };
+
 
 /* =========================
    FILE NAME
@@ -462,64 +566,65 @@ document.getElementById(
 
 function exportFileName(ext){
 
-  const style =
-    (
-      document.getElementById(
-        'styleName'
-      ).value.trim() ||
+  const style=(
+    document
+      .getElementById('styleName')
+      .value
+      .trim() ||
 
-      document.getElementById(
-        'styleTitle'
-      ).textContent.trim() ||
+    document
+      .getElementById('styleTitle')
+      .textContent
+      .trim() ||
 
-      'Name'
-    )
-    .replace(
-      /[\\/:*?"<>|]/g,
-      ''
-    )
-    .trim() || 'Name';
+    'Name'
+  )
+  .replace(
+    /[\\/:*?"<>|]/g,
+    ''
+  )
+  .trim()||'Name';
 
-  return style +
-    ' - Concept.' +
+  return style+
+    ' - Concept.'+
     ext;
 }
 
+
 /* =========================
-   SAVE PNG
+   EXPORT PNG
 ========================= */
 
 document.getElementById(
   'savePng'
-).onclick = async () => {
+).onclick=async()=>{
 
-  const button =
+  const button=
     document.getElementById(
       'savePng'
     );
 
-  if(button.disabled) return;
+  if(button.disabled)return;
 
-  const oldText =
+  const oldText=
     button.textContent;
 
-  button.disabled = true;
+  button.disabled=true;
 
-  button.textContent =
-    'Saving...';
+  button.textContent='Saving...';
 
-  let wrap = null;
+  let wrap=null;
 
   try{
 
     if(
-      typeof html2canvas !==
-      'function'
+      typeof html2canvas!=='function'
     ){
       throw new Error(
         'html2canvas missing'
       );
     }
+
 
     if(
       document.fonts &&
@@ -528,113 +633,141 @@ document.getElementById(
       await document.fonts.ready;
     }
 
-    const appRect =
+
+    const appRect=
       app.getBoundingClientRect();
 
-    const width =
+    const width=
       Math.round(
         appRect.width
       );
 
-    /* Clone stats */
 
-    const stats =
+    /*
+      CLONE DOS STATS
+    */
+
+    const stats=
       grid.cloneNode(true);
+
 
     stats
       .querySelectorAll('.remove')
-      .forEach(x => x.remove());
+      .forEach(x=>x.remove());
 
-    /* Export spacing */
 
     stats
       .querySelectorAll('.fill')
-      .forEach(fill => {
+      .forEach(fill=>{
 
-        fill.style.left = '5px';
-        fill.style.top = '5px';
-        fill.style.bottom = '5px';
+        const box=
+          fill.closest('.box');
 
-        fill.style.maxWidth =
-          'calc(100% - 10px)';
+        if(!box)return;
+
+        const v=Math.max(
+          0,
+          Math.min(
+            10,
+            Number(box.dataset.value)||0
+          )
+        );
+
+        fill.style.setProperty(
+          '--fill-scale',
+          String(v/10)
+        );
+
+        fill.style.width='auto';
+
+        fill.style.maxWidth='none';
       });
 
-    wrap =
-      document.createElement(
-        'div'
-      );
 
-    wrap.style.cssText =
-      'position:absolute;' +
-      'left:-100000px;' +
-      'top:0;' +
-      'width:' +
-      width +
-      'px;' +
-      'padding:0;' +
+    /*
+      EXPORT PANEL
+    */
+
+    const panel=
+      document.createElement('div');
+
+    panel.className=
+      'export-panel';
+
+    panel.style.width=
+      grid.offsetWidth+'px';
+
+    panel.appendChild(stats);
+
+
+    wrap=
+      document.createElement('div');
+
+    wrap.style.cssText=
+      'position:absolute;'+
+      'left:-100000px;'+
+      'top:0;'+
+      'width:'+width+'px;'+
+      'padding:0;'+
       'background:transparent;';
 
-    wrap.appendChild(stats);
+    wrap.appendChild(panel);
 
     document.body.appendChild(
       wrap
     );
 
-    const scale = 3;
 
-    const statsCanvas =
+    const statsCanvas=
       await html2canvas(
         wrap,
         {
           backgroundColor:null,
-          scale:scale,
+          scale:2,
           useCORS:true,
           allowTaint:true,
           logging:false
         }
       );
 
-    const title =
+
+    /*
+      TITLE SEPARADO
+
+      Isso impede que Ultra/Gradient
+      quebre o restante da imagem.
+    */
+
+    const title=
       document.getElementById(
         'styleTitle'
       );
 
-    const titleText =
-      title.textContent || 'Name';
+    const titleText=
+      title.textContent||'Name';
 
-    const cs =
+    const cs=
       getComputedStyle(title);
 
-    const originalFontSize =
-      parseFloat(
-        cs.fontSize
-      ) || 64;
+    const titleH=110;
 
-    const scaledFontSize =
-      Math.round(
-        originalFontSize *
-        scale
-      );
 
-    const titleH =
-      Math.round(
-        scaledFontSize * 1.5
-      );
-
-    const out =
+    const out=
       document.createElement(
         'canvas'
       );
 
-    out.width =
+    out.width=
       statsCanvas.width;
 
-    out.height =
-      statsCanvas.height +
-      titleH;
+    out.height=
+      statsCanvas.height+
+      titleH*2;
 
-    const ctx =
+
+    const ctx=
       out.getContext('2d');
+
 
     ctx.clearRect(
       0,
@@ -643,214 +776,251 @@ document.getElementById(
       out.height
     );
 
+
     ctx.save();
 
-    ctx.textAlign =
-      'center';
+    ctx.textAlign='center';
 
-    ctx.textBaseline =
-      'middle';
+    ctx.textBaseline='middle';
 
-    let fontFamily =
-      cs.fontFamily ||
+
+    let fontFamily=
+      cs.fontFamily||
       'Arial';
 
-    let fontWeight =
-      cs.fontWeight ||
-      '700';
+    let fontSize=
+      Math.round(
+        parseFloat(
+          cs.fontSize
+        )||64
+      )*2;
 
-    let fontStyle =
-      cs.fontStyle ||
+    let fontWeight=
+      cs.fontWeight||
+      '900';
+
+    let fontStyle=
+      cs.fontStyle||
       'normal';
 
-    ctx.font =
-      fontStyle +
-      ' ' +
-      fontWeight +
-      ' ' +
-      scaledFontSize +
-      'px ' +
-      fontFamily;
 
-    ctx.lineJoin =
-      'round';
+    /*
+      ULTRA
+    */
 
-    const isGradient =
+    if(
       title.classList.contains(
         'title-gradient'
-      ) ||
+      )
+    ){
+
+      fontFamily=
+        "'Orbitron',Arial,sans-serif";
+
+      fontWeight='800';
+
+      fontStyle='italic';
+    }
+
+
+    ctx.font=
+      fontStyle+' '+
+      fontWeight+' '+
+      fontSize+'px '+
+      fontFamily;
+
+
+    /*
+      TITLE COLOR
+    */
+
+    let titleGradient=
+      title.classList.contains(
+        'title-gradient'
+      );
+
+    let customGradient=
       title.classList.contains(
         'title-custom-gradient'
       );
 
-    const centerY =
-      titleH / 2;
 
-    if(isGradient){
+    if(
+      titleGradient ||
+      customGradient
+    ){
 
-      if(
-        title.classList.contains(
-          'title-custom-gradient'
-        )
-      ){
+      let gradient;
 
-        const top =
-          cs.getPropertyValue(
-            '--title-top'
-          ).trim() ||
-          '#25ff00';
 
-        const bottom =
-          cs.getPropertyValue(
-            '--title-bottom'
-          ).trim() ||
-          '#396cff';
+      if(customGradient){
 
-        const g =
+        gradient=
           ctx.createLinearGradient(
             0,
-            centerY -
-              scaledFontSize / 2,
             0,
-            centerY +
-              scaledFontSize / 2
+            0,
+            fontSize
           );
 
-        g.addColorStop(
+        gradient.addColorStop(
           0,
-          top
+          title
+            .style
+            .getPropertyValue(
+              '--title-top'
+            )||'#25ff00'
         );
 
-        g.addColorStop(
+        gradient.addColorStop(
           1,
-          bottom
+          title
+            .style
+            .getPropertyValue(
+              '--title-bottom'
+            )||'#396cff'
         );
-
-        ctx.fillStyle = g;
 
       }else{
 
-        const g =
+        gradient=
           ctx.createLinearGradient(
             0,
             0,
-            out.width,
-            0
+            0,
+            fontSize
           );
 
-        g.addColorStop(
+        gradient.addColorStop(
           0,
-          '#ff0000'
+          '#e0ddff'
         );
 
-        g.addColorStop(
-          .14,
-          '#ff7a00'
+        gradient.addColorStop(
+          .48,
+          '#a9a4ff'
         );
 
-        g.addColorStop(
-          .28,
-          '#fff000'
-        );
-
-        g.addColorStop(
-          .42,
-          '#25ff00'
-        );
-
-        g.addColorStop(
-          .56,
-          '#00d9ff'
-        );
-
-        g.addColorStop(
-          .70,
-          '#396cff'
-        );
-
-        g.addColorStop(
-          .84,
-          '#9d39ff'
-        );
-
-        g.addColorStop(
+        gradient.addColorStop(
           1,
-          '#ff00d9'
+          '#7169d5'
         );
-
-        ctx.fillStyle = g;
       }
+
+
+      ctx.fillStyle=gradient;
 
     }else{
 
-      ctx.fillStyle =
-        cs.color ||
-        '#ffffff';
+      ctx.fillStyle=
+        cs.color||
+        '#fff';
     }
 
-    const stroke =
-      2 * scale;
 
-    if(
-      stroke > 0 &&
-      !isGradient
-    ){
+    /*
+      TITLE POSITION
+    */
 
-      ctx.lineWidth =
-        stroke;
+    const titleY=
+      titleH;
 
-      ctx.strokeStyle =
-        cs.webkitTextStrokeColor ||
-        '#000000';
 
-      ctx.strokeText(
-        titleText,
-        out.width / 2,
-        centerY
-      );
-    }
+    /*
+      TITLE SHADOW / OUTLINE
+    */
+
+    ctx.lineWidth=4;
+
+    ctx.strokeStyle='#000';
+
+    ctx.strokeText(
+      titleText,
+      out.width/2,
+      titleY,
+      out.width-40
+    );
 
     ctx.fillText(
       titleText,
-      out.width / 2,
-      centerY
+      out.width/2,
+      titleY,
+      out.width-40
     );
 
+
     ctx.restore();
+
+
+    /*
+      STATS ABAIXO DO TITLE
+    */
 
     ctx.drawImage(
       statsCanvas,
       0,
-      titleH
+      titleH*2
     );
 
-    const a =
-      document.createElement(
-        'a'
-      );
 
-    a.download =
-      exportFileName('png');
+    /*
+      DOWNLOAD
+    */
 
-    a.href =
-      out.toDataURL(
-        'image/png'
-      );
+    out.toBlob(
+      blob=>{
 
-    document.body.appendChild(
-      a
+        if(!blob){
+
+          throw new Error(
+            'Could not create PNG'
+          );
+        }
+
+
+        const url=
+          URL.createObjectURL(
+            blob
+          );
+
+        const a=
+          document.createElement(
+            'a'
+          );
+
+        a.href=url;
+
+        a.download=
+          exportFileName('png');
+
+        document.body.appendChild(a);
+
+        a.click();
+
+        a.remove();
+
+
+        setTimeout(
+          ()=>{
+            URL.revokeObjectURL(
+              url
+            );
+          },
+          5000
+        );
+
+      },
+      'image/png'
     );
 
-    a.click();
-
-    a.remove();
 
   }catch(err){
 
     console.error(err);
 
     alert(
-      'Could not save the image.'
+      'Could not create the PNG: '+
+      (err.message||err)
     );
 
   }finally{
@@ -859,12 +1029,357 @@ document.getElementById(
       wrap.remove();
     }
 
-    button.disabled = false;
+    app.classList.remove(
+      'exporting'
+    );
 
-    button.textContent =
+    button.textContent=
       oldText;
+
+    button.disabled=false;
   }
 };
+
+
+/* =========================
+   GIF
+========================= */
+
+document.getElementById(
+  'saveGif'
+).onclick=async()=>{
+
+  const button=
+    document.getElementById(
+      'saveGif'
+    );
+
+  if(button.disabled)return;
+
+  const old=
+    button.textContent;
+
+  button.disabled=true;
+
+  button.textContent='Preparing...';
+
+  const frames=[];
+
+  const frameCount=24;
+
+  const delay=80;
+
+  const rainbowBoxes=
+    [
+      ...grid.querySelectorAll(
+        '.rainbow-border'
+      )
+    ];
+
+  const rainbowFills=
+    [
+      ...grid.querySelectorAll(
+        '.rainbow-border .fill'
+      )
+    ];
+
+
+  try{
+
+    if(
+      typeof html2canvas!=='function'
+    ){
+      throw new Error(
+        'html2canvas missing'
+      );
+    }
+
+
+    if(
+      document.fonts &&
+      document.fonts.ready
+    ){
+      await document.fonts.ready;
+    }
+
+
+    for(
+      let i=0;
+      i<frameCount;
+      i++
+    ){
+
+      const pos=
+        (i/frameCount)*300;
+
+
+      rainbowBoxes.forEach(
+        box=>{
+
+          box.style.setProperty(
+            '--gif-rainbow-pos',
+            pos+'%'
+          );
+        }
+      );
+
+
+      rainbowFills.forEach(
+        fill=>{
+
+          fill.style.setProperty(
+            '--gif-rainbow-pos',
+            pos+'%'
+          );
+        }
+      );
+
+
+      const exportWrap=
+        document.createElement(
+          'div'
+        );
+
+      exportWrap.style.cssText=
+        'position:absolute;'+
+        'left:-100000px;'+
+        'top:0;'+
+        'background:transparent;'+
+        'padding:0;';
+
+
+      const titleClone=
+        document
+          .getElementById(
+            'styleTitle'
+          )
+          .cloneNode(true);
+
+
+      titleClone
+        .style
+        .marginBottom='20px';
+
+
+      titleClone
+        .style
+        .position='relative';
+
+
+      titleClone
+        .querySelectorAll(
+          '::before,::after'
+        );
+
+
+      const gridClone=
+        grid.cloneNode(true);
+
+
+      gridClone
+        .querySelectorAll(
+          '.remove'
+        )
+        .forEach(
+          x=>x.remove()
+        );
+
+
+      gridClone
+        .querySelectorAll(
+          '.fill'
+        )
+        .forEach(
+          fill=>{
+
+            const box=
+              fill.closest('.box');
+
+            if(!box)return;
+
+            const v=
+              Math.max(
+                0,
+                Math.min(
+                  10,
+                  Number(
+                    box.dataset.value
+                  )||0
+                )
+              );
+
+            fill.style.setProperty(
+              '--fill-scale',
+              String(v/10)
+            );
+          }
+        );
+
+
+      const panel=
+        document.createElement(
+          'div'
+        );
+
+      panel.className=
+        'export-panel';
+
+      panel.style.width=
+        grid.offsetWidth+'px';
+
+      panel.appendChild(
+        gridClone
+      );
+
+
+      exportWrap.append(
+        titleClone,
+        panel
+      );
+
+
+      document.body.appendChild(
+        exportWrap
+      );
+
+
+      const canvas=
+        await html2canvas(
+          exportWrap,
+          {
+            backgroundColor:null,
+            scale:1,
+            useCORS:true,
+            logging:false
+          }
+        );
+
+
+      exportWrap.remove();
+
+
+      frames.push(
+        canvas
+          .getContext('2d')
+          .getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          )
+      );
+
+
+      button.textContent=
+        'GIF '+
+        Math.round(
+          ((i+1)/frameCount)*100
+        )+
+        '%';
+
+
+      await new Promise(
+        r=>setTimeout(r,10)
+      );
+    }
+
+
+    /*
+      GIF encoder
+    */
+
+    const first=frames[0];
+
+    const bytes=
+      encodeAnimatedGif(
+        frames,
+        first.width,
+        first.height,
+        delay
+      );
+
+
+    const blob=
+      new Blob(
+        [bytes],
+        {
+          type:'image/gif'
+        }
+      );
+
+
+    const url=
+      URL.createObjectURL(
+        blob
+      );
+
+
+    const a=
+      document.createElement(
+        'a'
+      );
+
+    a.href=url;
+
+    a.download=
+      exportFileName('gif');
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    a.remove();
+
+
+    setTimeout(
+      ()=>{
+        URL.revokeObjectURL(
+          url
+        );
+      },
+      5000
+    );
+
+
+  }catch(err){
+
+    console.error(err);
+
+    alert(
+      'Could not create the GIF: '+
+      (err.message||err)
+    );
+
+  }finally{
+
+    rainbowFills.forEach(
+      el=>{
+        el.style.animation='';
+        el.style.backgroundPosition='';
+      }
+    );
+
+
+    rainbowBoxes.forEach(
+      el=>{
+        el.style.animation='';
+        el.style.removeProperty(
+          '--gif-rainbow-pos'
+        );
+      }
+    );
+
+
+    app.classList.remove(
+      'exporting'
+    );
+
+    button.textContent=old;
+
+    button.disabled=false;
+  }
+};
+
 
 /* =========================
    DEFAULT STATS
@@ -880,5 +1395,5 @@ document.getElementById(
   'Speed',
   'Spike'
 ].forEach(
-  x => addBox(x,5)
+  x=>addBox(x,5)
 );
