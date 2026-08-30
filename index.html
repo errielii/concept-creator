@@ -47,10 +47,8 @@ body{
 
 #styleTitle{
   position:relative;
-
   margin:0;
   padding-top:0;
-
   height:125px;
 
   display:flex;
@@ -60,7 +58,6 @@ body{
   font-family:Arial,sans-serif;
   font-size:72px;
   line-height:1;
-
   font-weight:700;
   font-style:normal;
 
@@ -75,7 +72,6 @@ body{
   z-index:20;
 }
 
-/* linha original */
 #styleTitle::after{
   content:"";
 
@@ -103,7 +99,6 @@ body{
   box-shadow:0 1px 5px #000;
 }
 
-/* estrela removida */
 #styleTitle::before{
   content:none !important;
 }
@@ -116,7 +111,6 @@ body{
   font-family:Arial,sans-serif !important;
 
   font-size:72px;
-
   font-weight:700 !important;
   font-style:normal !important;
 
@@ -129,7 +123,6 @@ body{
 
   -webkit-background-clip:text;
   background-clip:text;
-
   -webkit-text-fill-color:transparent;
 
   -webkit-text-stroke:2px #090817;
@@ -148,20 +141,16 @@ body{
   background-clip:text;
 
   -webkit-text-fill-color:transparent;
-
   -webkit-text-stroke:2px #090817;
 
   text-shadow:none;
 }
 
-/* ULTRA */
 #styleTitle.title-ultra{
   font-family:'Orbitron',Arial,sans-serif !important;
 
   font-size:72px;
-
   font-weight:900 !important;
-
   font-style:italic !important;
 
   letter-spacing:2px;
@@ -286,12 +275,22 @@ body{
   color:#fff;
 
   /*
-    apenas um contorno.
-    sem text-shadow duplicando o contorno.
+    CONTORNO CORRIGIDO
+    sem -webkit-text-stroke
+    para evitar serrilhado e duplicação
   */
-  -webkit-text-stroke:1px #000;
 
-  text-shadow:none;
+  -webkit-text-stroke:0;
+
+  text-shadow:
+    -1px -1px 0 #000,
+     0   -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  0   0 #000,
+     1px  0   0 #000,
+    -1px  1px 0 #000,
+     0    1px 0 #000,
+     1px  1px 0 #000;
 
   pointer-events:none;
 }
@@ -558,18 +557,9 @@ button:hover{
    EXPORT
 ========================= */
 
-/*
-  O restante da barra fica preto/transparente
-  somente durante a exportação.
-*/
-
 #app.exporting .box{
   background:rgba(2,10,17,.70) !important;
 }
-
-/*
-  quadrado arredondado com degradê no restante
-*/
 
 #app.exporting .box::after{
   content:"";
@@ -654,9 +644,17 @@ button:hover{
   .name{
     font-size:22px;
 
-    -webkit-text-stroke:1px #000;
+    -webkit-text-stroke:0;
 
-    text-shadow:none;
+    text-shadow:
+      -1px -1px 0 #000,
+       0   -1px 0 #000,
+       1px -1px 0 #000,
+      -1px  0   0 #000,
+       1px  0   0 #000,
+      -1px  1px 0 #000,
+       0    1px 0 #000,
+       1px  1px 0 #000;
   }
 
   .remove{
@@ -686,64 +684,32 @@ button:hover{
   <div id="controls">
 
     <div class="row">
-      <input
-        id="styleName"
-        type="text"
-        placeholder="Style name"
-      >
-
-      <button id="applyName">
-        Apply name
-      </button>
-
-      <button id="gradientName">
-        Ultra
-      </button>
+      <input id="styleName" type="text" placeholder="Style name">
+      <button id="applyName">Apply name</button>
+      <button id="gradientName">Ultra</button>
     </div>
 
     <div class="row">
 
       <div class="colorControl">
         <span>Title</span>
-
-        <input
-          id="titleColor"
-          type="color"
-          value="#aaa5ff"
-        >
+        <input id="titleColor" type="color" value="#aaa5ff">
       </div>
 
       <div class="colorControl">
-
         <span>Gradient</span>
 
-        <input
-          id="titleGradientTop"
-          type="color"
-          value="#dcd9ff"
-        >
+        <input id="titleGradientTop" type="color" value="#dcd9ff">
+        <input id="titleGradientBottom" type="color" value="#6d65cf">
 
-        <input
-          id="titleGradientBottom"
-          type="color"
-          value="#6d65cf"
-        >
-
-        <button id="titleGradient">
-          Apply
-        </button>
-
+        <button id="titleGradient">Apply</button>
       </div>
 
     </div>
 
     <div class="row">
 
-      <input
-        id="statName"
-        type="text"
-        placeholder="Stat name"
-      >
+      <input id="statName" type="text" placeholder="Stat name">
 
       <input
         id="statValue"
@@ -754,40 +720,21 @@ button:hover{
         value="5"
       >
 
-      <button id="add">
-        Add stat
-      </button>
+      <button id="add">Add stat</button>
 
     </div>
 
     <div class="row">
 
-      <button id="zero">
-        Set all 0
-      </button>
-
-      <button id="ten">
-        Set all 10
-      </button>
-
-      <button id="clear">
-        Clear
-      </button>
-
-      <button id="rainbowMode">
-        Rainbow
-      </button>
-
-      <button id="savePng">
-        Save PNG
-      </button>
+      <button id="zero">Set all 0</button>
+      <button id="ten">Set all 10</button>
+      <button id="clear">Clear</button>
+      <button id="rainbowMode">Rainbow</button>
+      <button id="savePng">Save PNG</button>
 
     </div>
 
-    <div
-      id="rainbowHint"
-      class="small"
-    >
+    <div id="rainbowHint" class="small">
       Click Rainbow, then click a stat
     </div>
 
@@ -799,15 +746,11 @@ button:hover{
 
 <script>
 
-const grid =
-  document.getElementById('grid');
-
-const app =
-  document.getElementById('app');
+const grid = document.getElementById('grid');
+const app = document.getElementById('app');
 
 let dragging = null;
 let rainbowMode = false;
-
 
 /* =========================
    COLORS
@@ -830,7 +773,6 @@ function color(v){
   return '#ff0000';
 }
 
-
 /* =========================
    UPDATE
 ========================= */
@@ -848,13 +790,9 @@ function update(box){
 
   const c = color(v);
 
-  box.style.setProperty(
-    '--color',
-    c
-  );
+  box.style.setProperty('--color',c);
 
-  const fill =
-    box.querySelector('.fill');
+  const fill = box.querySelector('.fill');
 
   if(!fill)
     return;
@@ -872,16 +810,6 @@ function update(box){
       ? 'linear-gradient(90deg,#ff0000,#ff7a00,#fff000,#25ff00,#00d9ff,#396cff,#9d39ff,#ff00d9)'
       : c;
 
-
-  /*
-    20% MENOR.
-
-    A área disponível continua sendo calculada
-    dentro do próprio stat.
-
-    Assim nunca ultrapassa o limite.
-  */
-
   const available =
     Math.max(
       0,
@@ -894,43 +822,25 @@ function update(box){
       available * (v / 10) * 0.8
     );
 
-  fill.style.left =
-    '5px';
-
-  fill.style.width =
-    fillWidth + 'px';
-
-  fill.style.maxWidth =
-    available + 'px';
-
-  fill.style.right =
-    'auto';
-
-  fill.style.top =
-    '5px';
-
-  fill.style.bottom =
-    '5px';
+  fill.style.left = '5px';
+  fill.style.width = fillWidth + 'px';
+  fill.style.maxWidth = available + 'px';
+  fill.style.right = 'auto';
+  fill.style.top = '5px';
+  fill.style.bottom = '5px';
 }
-
 
 /* =========================
    ADD BOX
 ========================= */
 
-function addBox(
-  name,
-  value = 5
-){
+function addBox(name,value=5){
 
-  const box =
-    document.createElement('div');
+  const box = document.createElement('div');
 
-  box.className =
-    'box';
+  box.className = 'box';
 
-  box.dataset.name =
-    name;
+  box.dataset.name = name;
 
   box.dataset.value =
     Math.max(
@@ -941,39 +851,25 @@ function addBox(
       )
     );
 
-  box.dataset.rainbow =
-    'false';
+  box.dataset.rainbow = 'false';
 
+  const fill = document.createElement('div');
 
-  const fill =
-    document.createElement('div');
+  fill.className = 'fill';
 
-  fill.className =
-    'fill';
+  const text = document.createElement('div');
 
+  text.className = 'name';
 
-  const text =
-    document.createElement('div');
+  text.textContent = name;
 
-  text.className =
-    'name';
+  const remove = document.createElement('button');
 
-  text.textContent =
-    name;
+  remove.className = 'remove';
 
+  remove.textContent = '×';
 
-  const remove =
-    document.createElement('button');
-
-  remove.className =
-    'remove';
-
-  remove.textContent =
-    '×';
-
-  remove.title =
-    'Remove stat';
-
+  remove.title = 'Remove stat';
 
   remove.onclick = e => {
 
@@ -982,18 +878,15 @@ function addBox(
     box.remove();
   };
 
-
   box.append(
     fill,
     text,
     remove
   );
 
-
   grid.appendChild(box);
 
   update(box);
-
 
   /* =========================
      DRAG
@@ -1012,36 +905,25 @@ function addBox(
 
       e.preventDefault();
 
-      dragging =
-        box;
+      dragging = box;
 
-      app.classList.add(
-        'dragging'
-      );
+      app.classList.add('dragging');
 
-      box.style.cursor =
-        'grabbing';
+      box.style.cursor = 'grabbing';
 
       try{
-
-        box.setPointerCapture(
-          e.pointerId
-        );
-
+        box.setPointerCapture(e.pointerId);
       }catch(_){}
 
       setValue(e);
     }
   );
 
-
   box.addEventListener(
     'pointermove',
     e => {
 
-      if(
-        dragging === box
-      ){
+      if(dragging === box){
 
         e.preventDefault();
 
@@ -1050,36 +932,21 @@ function addBox(
     }
   );
 
-
   const stop = () => {
 
-    if(
-      dragging === box
-    ){
+    if(dragging === box){
 
       dragging = null;
 
-      app.classList.remove(
-        'dragging'
-      );
+      app.classList.remove('dragging');
 
-      box.style.cursor =
-        'grab';
+      box.style.cursor = 'grab';
     }
   };
 
-
-  box.addEventListener(
-    'pointerup',
-    stop
-  );
-
-  box.addEventListener(
-    'pointercancel',
-    stop
-  );
+  box.addEventListener('pointerup',stop);
+  box.addEventListener('pointercancel',stop);
 }
-
 
 /* =========================
    SET VALUE
@@ -1102,12 +969,10 @@ function setValue(e){
       )
     );
 
-  dragging.dataset.value =
-    v;
+  dragging.dataset.value = v;
 
   update(dragging);
 }
-
 
 document.addEventListener(
   'pointerup',
@@ -1115,13 +980,9 @@ document.addEventListener(
 
     dragging = null;
 
-    app.classList.remove(
-      'dragging'
-    );
-
+    app.classList.remove('dragging');
   }
 );
-
 
 /* =========================
    TITLE
@@ -1141,7 +1002,6 @@ document.getElementById(
   ).textContent =
     value || 'Name';
 };
-
 
 /* =========================
    TITLE COLOR
@@ -1165,8 +1025,7 @@ document.getElementById(
   title.style.color =
     e.target.value || '#fff';
 
-  title.style.webkitTextFillColor =
-    '';
+  title.style.webkitTextFillColor = '';
 
   title.style.webkitTextStroke =
     '2px #000';
@@ -1174,7 +1033,6 @@ document.getElementById(
   title.style.textShadow =
     '0 3px 0 #29255c,0 6px 8px #000';
 };
-
 
 /* =========================
    ULTRA
@@ -1199,7 +1057,6 @@ document.getElementById(
   );
 };
 
-
 /* =========================
    TITLE GRADIENT
 ========================= */
@@ -1218,7 +1075,6 @@ const titleGradientBottom =
   document.getElementById(
     'titleGradientBottom'
   );
-
 
 titleGradient.onclick = () => {
 
@@ -1247,11 +1103,9 @@ titleGradient.onclick = () => {
   );
 };
 
-
 [
   titleGradientTop,
   titleGradientBottom
-
 ].forEach(input => {
 
   input.oninput = () => {
@@ -1271,9 +1125,7 @@ titleGradient.onclick = () => {
       titleGradientBottom.value
     );
   };
-
 });
-
 
 /* =========================
    ADD STAT
@@ -1294,10 +1146,7 @@ document.getElementById(
       'statValue'
     ).value;
 
-  addBox(
-    name,
-    value
-  );
+  addBox(name,value);
 
   document.getElementById(
     'statName'
@@ -1307,7 +1156,6 @@ document.getElementById(
     'statValue'
   ).value = 5;
 };
-
 
 /* =========================
    RAINBOW
@@ -1323,11 +1171,9 @@ const rainbowHint =
     'rainbowHint'
   );
 
-
 rainbowButton.onclick = () => {
 
-  rainbowMode =
-    !rainbowMode;
+  rainbowMode = !rainbowMode;
 
   rainbowButton.classList.toggle(
     'active',
@@ -1339,7 +1185,6 @@ rainbowButton.onclick = () => {
       ? 'Now click a stat to enable/disable Rainbow'
       : 'Click Rainbow, then click a stat';
 };
-
 
 grid.addEventListener(
   'click',
@@ -1365,7 +1210,6 @@ grid.addEventListener(
   }
 );
 
-
 /* =========================
    RESET
 ========================= */
@@ -1377,14 +1221,12 @@ document.getElementById(
   [...grid.children].forEach(
     box => {
 
-      box.dataset.value =
-        0;
+      box.dataset.value = 0;
 
       update(box);
     }
   );
 };
-
 
 document.getElementById(
   'ten'
@@ -1393,23 +1235,19 @@ document.getElementById(
   [...grid.children].forEach(
     box => {
 
-      box.dataset.value =
-        10;
+      box.dataset.value = 10;
 
       update(box);
     }
   );
 };
 
-
 document.getElementById(
   'clear'
 ).onclick = () => {
 
-  grid.innerHTML =
-    '';
+  grid.innerHTML = '';
 };
-
 
 /* =========================
    FILE NAME
@@ -1440,13 +1278,8 @@ function exportFileName(ext){
     .trim()
     || 'Name';
 
-  return (
-    style +
-    ' - Concept.' +
-    ext
-  );
+  return style + ' - Concept.' + ext;
 }
-
 
 /* =========================
    SAVE PNG
@@ -1467,89 +1300,53 @@ document.getElementById(
   const oldText =
     button.textContent;
 
-  button.disabled =
-    true;
+  button.disabled = true;
 
-  button.textContent =
-    'Saving...';
+  button.textContent = 'Saving...';
 
   let wrap = null;
 
   try{
 
-    if(
-      typeof html2canvas !==
-      'function'
-    ){
-
-      throw new Error(
-        'html2canvas missing'
-      );
+    if(typeof html2canvas !== 'function'){
+      throw new Error('html2canvas missing');
     }
-
 
     if(
       document.fonts &&
       document.fonts.ready
     ){
-
       await document.fonts.ready;
     }
-
 
     const gridRect =
       grid.getBoundingClientRect();
 
     const width =
-      Math.round(
-        gridRect.width
-      );
-
+      Math.round(gridRect.width);
 
     const stats =
       grid.cloneNode(true);
 
-
-    stats
-      .querySelectorAll(
-        '.remove'
-      )
-      .forEach(
-        x => x.remove()
-      );
-
-
-    /*
-      recalcula cada barra no clone
-      usando o valor original.
-      nunca usa uma largura que possa
-      estar bugada visualmente.
-    */
+    stats.querySelectorAll(
+      '.remove'
+    ).forEach(
+      x => x.remove()
+    );
 
     const originals =
-      [
-        ...grid.querySelectorAll(
-          '.box'
-        )
-      ];
+      [...grid.querySelectorAll('.box')];
 
     const clones =
-      [
-        ...stats.querySelectorAll(
-          '.box'
-        )
-      ];
-
+      [...stats.querySelectorAll('.box')];
 
     originals.forEach(
       (original,index) => {
 
-        const clone =
-          clones[index];
+        const clone = clones[index];
 
         if(!clone)
           return;
-
 
         const v =
           Math.max(
@@ -1562,13 +1359,11 @@ document.getElementById(
             )
           );
 
-
         const available =
           Math.max(
             0,
             original.clientWidth - 10
           );
-
 
         const fillWidth =
           Math.min(
@@ -1578,93 +1373,40 @@ document.getElementById(
             0.8
           );
 
-
         const cloneFill =
-          clone.querySelector(
-            '.fill'
-          );
-
+          clone.querySelector('.fill');
 
         if(!cloneFill)
           return;
 
-
-        cloneFill.style.left =
-          '5px';
-
-        cloneFill.style.width =
-          fillWidth + 'px';
-
-        cloneFill.style.maxWidth =
-          available + 'px';
-
-        cloneFill.style.right =
-          'auto';
-
-        cloneFill.style.top =
-          '5px';
-
-        cloneFill.style.bottom =
-          '5px';
+        cloneFill.style.left = '5px';
+        cloneFill.style.width = fillWidth + 'px';
+        cloneFill.style.maxWidth = available + 'px';
+        cloneFill.style.right = 'auto';
+        cloneFill.style.top = '5px';
+        cloneFill.style.bottom = '5px';
       }
     );
 
-
-    /* =========================
-       EXPORT CONTAINER
-    ========================= */
-
     wrap =
-      document.createElement(
-        'div'
-      );
+      document.createElement('div');
 
-    wrap.style.position =
-      'absolute';
+    wrap.style.position = 'absolute';
+    wrap.style.left = '-100000px';
+    wrap.style.top = '0';
+    wrap.style.width = width + 'px';
+    wrap.style.padding = '0';
+    wrap.style.margin = '0';
+    wrap.style.background = 'transparent';
+    wrap.style.overflow = 'visible';
 
-    wrap.style.left =
-      '-100000px';
+    wrap.appendChild(stats);
 
-    wrap.style.top =
-      '0';
+    document.body.appendChild(wrap);
 
-    wrap.style.width =
-      width + 'px';
+    app.classList.add('exporting');
 
-    wrap.style.padding =
-      '0';
-
-    wrap.style.margin =
-      '0';
-
-    wrap.style.background =
-      'transparent';
-
-    wrap.style.overflow =
-      'visible';
-
-
-    wrap.appendChild(
-      stats
-    );
-
-    document.body.appendChild(
-      wrap
-    );
-
-
-    /*
-      ativa visual de exportação
-    */
-
-    app.classList.add(
-      'exporting'
-    );
-
-
-    const scale =
-      3;
-
+    const scale = 3;
 
     const statsCanvas =
       await html2canvas(
@@ -1678,11 +1420,7 @@ document.getElementById(
         }
       );
 
-
-    app.classList.remove(
-      'exporting'
-    );
-
+    app.classList.remove('exporting');
 
     /* =========================
        TITLE
@@ -1694,55 +1432,37 @@ document.getElementById(
       );
 
     const titleText =
-      title.textContent ||
-      'Name';
+      title.textContent || 'Name';
 
     const cs =
-      getComputedStyle(
-        title
-      );
-
+      getComputedStyle(title);
 
     const originalFontSize =
-      parseFloat(
-        cs.fontSize
-      ) || 64;
-
+      parseFloat(cs.fontSize) || 64;
 
     const scaledFontSize =
       Math.round(
-        originalFontSize *
-        scale
+        originalFontSize * scale
       );
-
 
     const titleH =
       Math.round(
-        scaledFontSize *
-        1.5
+        scaledFontSize * 1.5
       );
-
 
     /* =========================
        FINAL CANVAS
     ========================= */
 
     const out =
-      document.createElement(
-        'canvas'
-      );
+      document.createElement('canvas');
 
-    out.width =
-      statsCanvas.width;
+    out.width = statsCanvas.width;
 
     out.height =
-      statsCanvas.height +
-      titleH;
+      statsCanvas.height + titleH;
 
-
-    const ctx =
-      out.getContext('2d');
-
+    const ctx = out.getContext('2d');
 
     ctx.clearRect(
       0,
@@ -1751,34 +1471,23 @@ document.getElementById(
       out.height
     );
 
-
     /* =========================
        TITLE
     ========================= */
 
     ctx.save();
 
-    ctx.textAlign =
-      'center';
-
-    ctx.textBaseline =
-      'middle';
-
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
 
     const fontFamily =
-      cs.fontFamily ||
-      'Arial';
-
+      cs.fontFamily || 'Arial';
 
     const fontWeight =
-      cs.fontWeight ||
-      '700';
-
+      cs.fontWeight || '700';
 
     const fontStyle =
-      cs.fontStyle ||
-      'normal';
-
+      cs.fontStyle || 'normal';
 
     ctx.font =
       fontStyle +
@@ -1789,24 +1498,9 @@ document.getElementById(
       'px ' +
       fontFamily;
 
+    ctx.lineJoin = 'round';
 
-    ctx.lineJoin =
-      'round';
-
-
-    const isGradient =
-      title.classList.contains(
-        'title-gradient'
-      ) ||
-
-      title.classList.contains(
-        'title-custom-gradient'
-      );
-
-
-    const centerY =
-      titleH / 2;
-
+    const centerY = titleH / 2;
 
     if(
       title.classList.contains(
@@ -1820,38 +1514,24 @@ document.getElementById(
         ).trim()
         || '#dcd9ff';
 
-
       const bottom =
         cs.getPropertyValue(
           '--title-bottom'
         ).trim()
         || '#6d65cf';
 
-
       const g =
         ctx.createLinearGradient(
           0,
-          centerY -
-            scaledFontSize / 2,
+          centerY - scaledFontSize / 2,
           0,
-          centerY +
-            scaledFontSize / 2
+          centerY + scaledFontSize / 2
         );
 
+      g.addColorStop(0,top);
+      g.addColorStop(1,bottom);
 
-      g.addColorStop(
-        0,
-        top
-      );
-
-      g.addColorStop(
-        1,
-        bottom
-      );
-
-
-      ctx.fillStyle =
-        g;
+      ctx.fillStyle = g;
 
     }else if(
       title.classList.contains(
@@ -1867,67 +1547,26 @@ document.getElementById(
           0
         );
 
-      g.addColorStop(
-        0,
-        '#ff0000'
-      );
+      g.addColorStop(0,'#ff0000');
+      g.addColorStop(.14,'#ff7a00');
+      g.addColorStop(.28,'#fff000');
+      g.addColorStop(.42,'#25ff00');
+      g.addColorStop(.56,'#00d9ff');
+      g.addColorStop(.70,'#396cff');
+      g.addColorStop(.84,'#9d39ff');
+      g.addColorStop(1,'#ff00d9');
 
-      g.addColorStop(
-        .14,
-        '#ff7a00'
-      );
-
-      g.addColorStop(
-        .28,
-        '#fff000'
-      );
-
-      g.addColorStop(
-        .42,
-        '#25ff00'
-      );
-
-      g.addColorStop(
-        .56,
-        '#00d9ff'
-      );
-
-      g.addColorStop(
-        .70,
-        '#396cff'
-      );
-
-      g.addColorStop(
-        .84,
-        '#9d39ff'
-      );
-
-      g.addColorStop(
-        1,
-        '#ff00d9'
-      );
-
-
-      ctx.fillStyle =
-        g;
+      ctx.fillStyle = g;
 
     }else{
 
       ctx.fillStyle =
-        cs.color ||
-        '#ffffff';
+        cs.color || '#ffffff';
     }
 
+    ctx.lineWidth = 2 * scale;
 
-    /*
-      contorno limpo do título
-    */
-
-    ctx.lineWidth =
-      2 * scale;
-
-    ctx.strokeStyle =
-      '#000000';
+    ctx.strokeStyle = '#000000';
 
     ctx.strokeText(
       titleText,
@@ -1935,16 +1574,13 @@ document.getElementById(
       centerY
     );
 
-
     ctx.fillText(
       titleText,
       out.width / 2,
       centerY
     );
 
-
     ctx.restore();
-
 
     /* =========================
        STATS
@@ -1956,34 +1592,24 @@ document.getElementById(
       titleH
     );
 
-
     /* =========================
        DOWNLOAD
     ========================= */
 
     const a =
-      document.createElement(
-        'a'
-      );
+      document.createElement('a');
 
     a.download =
-      exportFileName(
-        'png'
-      );
+      exportFileName('png');
 
     a.href =
-      out.toDataURL(
-        'image/png'
-      );
+      out.toDataURL('image/png');
 
-    document.body.appendChild(
-      a
-    );
+    document.body.appendChild(a);
 
     a.click();
 
     a.remove();
-
 
   }catch(err){
 
@@ -1995,21 +1621,16 @@ document.getElementById(
 
   }finally{
 
-    app.classList.remove(
-      'exporting'
-    );
+    app.classList.remove('exporting');
 
     if(wrap)
       wrap.remove();
 
-    button.disabled =
-      false;
+    button.disabled = false;
 
-    button.textContent =
-      oldText;
+    button.textContent = oldText;
   }
 };
-
 
 /* =========================
    DEFAULT STATS
@@ -2028,18 +1649,16 @@ document.getElementById(
   x => addBox(x,5)
 );
 
-
-/* mantém as barras certas
-   quando a janela muda de tamanho */
+/* =========================
+   RESIZE
+========================= */
 
 window.addEventListener(
   'resize',
   () => {
 
     [...grid.children]
-      .forEach(
-        update
-      );
+      .forEach(update);
 
   }
 );
