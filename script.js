@@ -24,7 +24,7 @@ function color(v) {
 }
 
 /* =========================
-   UPDATE STAT
+   UPDATE
 ========================= */
 
 function update(box) {
@@ -32,8 +32,6 @@ function update(box) {
     0,
     Math.min(10, Number(box.dataset.value) || 0)
   );
-
-  box.dataset.value = v;
 
   const c = color(v);
 
@@ -43,73 +41,55 @@ function update(box) {
 
   if (!fill) return;
 
-  const rainbow = box.dataset.rainbow === 'true';
+  const rainbow =
+    box.dataset.rainbow === 'true';
 
-  box.classList.toggle('rainbow-border', rainbow);
+  box.classList.toggle(
+    'rainbow-border',
+    rainbow
+  );
+
+  fill.style.background = c;
 
   /*
     IMPORTANTE:
-    O preenchimento usa a área INTERNA da box.
-    Assim nunca passa da borda, mesmo em 10/10.
+    a largura fica limitada à área interna
+    da própria barra.
   */
 
-  const percent = Math.max(
-    0,
-    Math.min(100, v * 10)
-  );
+  const available =
+    Math.max(0, box.clientWidth - 10);
+
+  const fillWidth =
+    Math.min(
+      available,
+      Math.max(
+        0,
+        available * (v / 10)
+      )
+    );
 
   fill.style.left = '5px';
-  fill.style.right = 'auto';
   fill.style.top = '5px';
   fill.style.bottom = '5px';
-
-  fill.style.width =
-    `calc(${percent}% - ${percent >= 100 ? 10 : 0}px)`;
-
-  fill.style.maxWidth =
-    'calc(100% - 10px)';
-
-  if (rainbow) {
-    fill.style.background = `
-      linear-gradient(
-        90deg,
-        #ff0000,
-        #ff7a00,
-        #fff000,
-        #25ff00,
-        #00d9ff,
-        #396cff,
-        #9d39ff,
-        #ff00d9
-      )
-    `;
-    fill.style.backgroundSize = '100% 100%';
-    fill.style.animation = 'none';
-  } else {
-    fill.style.background = c;
-    fill.style.animation = 'none';
-  }
+  fill.style.right = 'auto';
+  fill.style.width = fillWidth + 'px';
+  fill.style.maxWidth = available + 'px';
 }
 
 /* =========================
-   ADD STAT
+   ADD BOX
 ========================= */
 
 function addBox(name, value = 5) {
   const box = document.createElement('div');
 
   box.className = 'box';
-
   box.dataset.name = name;
-
   box.dataset.value = Math.max(
     0,
-    Math.min(
-      10,
-      Number(value) || 5
-    )
+    Math.min(10, Number(value) || 5)
   );
-
   box.dataset.rainbow = 'false';
 
   const fill = document.createElement('div');
@@ -120,7 +100,6 @@ function addBox(name, value = 5) {
   text.textContent = name;
 
   const remove = document.createElement('button');
-
   remove.className = 'remove';
   remove.textContent = '×';
   remove.title = 'Remove stat';
@@ -141,7 +120,7 @@ function addBox(name, value = 5) {
   update(box);
 
   /* =========================
-     DRAG VALUE
+     DRAG
   ========================= */
 
   box.addEventListener(
@@ -185,9 +164,7 @@ function addBox(name, value = 5) {
     () => {
       if (dragging === box) {
         dragging = null;
-
         app.classList.remove('dragging');
-
         box.style.cursor = 'grab';
       }
     }
@@ -198,9 +175,7 @@ function addBox(name, value = 5) {
     () => {
       if (dragging === box) {
         dragging = null;
-
         app.classList.remove('dragging');
-
         box.style.cursor = 'grab';
       }
     }
@@ -234,7 +209,6 @@ document.addEventListener(
   'pointerup',
   () => {
     dragging = null;
-
     app.classList.remove('dragging');
   }
 );
@@ -256,10 +230,6 @@ document.getElementById(
   ).textContent =
     value || 'Name';
 };
-
-/* =========================
-   TITLE COLOR
-========================= */
 
 document.getElementById(
   'titleColor'
@@ -295,32 +265,17 @@ document.getElementById(
       'styleTitle'
     );
 
-  const active =
-    title.classList.toggle(
-      'title-gradient'
-    );
+  title.classList.toggle(
+    'title-gradient'
+  );
 
   title.classList.remove(
     'title-custom-gradient'
   );
-
-  /*
-    Ultra agora só controla
-    o modo do título.
-    Não altera tamanho,
-    posição ou stats.
-  */
-
-  if (active) {
-    title.style.webkitTextFillColor =
-      'transparent';
-  } else {
-    title.style.webkitTextFillColor = '';
-  }
 };
 
 /* =========================
-   CUSTOM TITLE GRADIENT
+   TITLE GRADIENT
 ========================= */
 
 const titleGradient =
@@ -363,11 +318,6 @@ titleGradient.onclick = () => {
       '--title-bottom',
       titleGradientBottom.value
     );
-
-    title.style.webkitTextFillColor =
-      'transparent';
-  } else {
-    title.style.webkitTextFillColor = '';
   }
 };
 
@@ -394,7 +344,7 @@ titleGradient.onclick = () => {
 });
 
 /* =========================
-   ADD BUTTON
+   ADD STAT
 ========================= */
 
 document.getElementById(
@@ -411,10 +361,7 @@ document.getElementById(
       'statValue'
     ).value;
 
-  addBox(
-    name,
-    value
-  );
+  addBox(name, value);
 
   document.getElementById(
     'statName'
@@ -483,9 +430,7 @@ grid.addEventListener(
 document.getElementById(
   'zero'
 ).onclick = () => {
-  [
-    ...grid.children
-  ].forEach(box => {
+  [...grid.children].forEach(box => {
     box.dataset.value = 0;
     update(box);
   });
@@ -494,9 +439,7 @@ document.getElementById(
 document.getElementById(
   'ten'
 ).onclick = () => {
-  [
-    ...grid.children
-  ].forEach(box => {
+  [...grid.children].forEach(box => {
     box.dataset.value = 10;
     update(box);
   });
@@ -525,162 +468,17 @@ function exportFileName(ext) {
 
       'Name'
     )
-    .replace(
-      /[\\/:*?"<>|]/g,
-      ''
-    )
-    .trim() || 'Name';
+      .replace(
+        /[\\/:*?"<>|]/g,
+        ''
+      )
+      .trim() || 'Name';
 
   return (
     style +
     ' - Concept.' +
     ext
   );
-}
-
-/* =========================
-   EXPORT HELPERS
-========================= */
-
-function makeExportStats() {
-  const stats =
-    grid.cloneNode(true);
-
-  stats
-    .querySelectorAll('.remove')
-    .forEach(x => x.remove());
-
-  /*
-    Exporta exatamente a largura
-    visual do grid.
-  */
-
-  stats.style.width = '100%';
-  stats.style.maxWidth = '800px';
-  stats.style.margin = '0 auto';
-
-  stats
-    .querySelectorAll('.box')
-    .forEach(box => {
-      box.style.overflow = 'hidden';
-      box.style.position = 'relative';
-
-      /*
-        Fundo restante:
-        aproximadamente 70% transparente.
-      */
-
-      box.style.background =
-        'linear-gradient(' +
-        '180deg,' +
-        'rgba(0,0,0,0.30) 0%,' +
-        'rgba(0,0,0,0.20) 55%,' +
-        'rgba(0,0,0,0.08) 100%' +
-        ')';
-
-      box.style.borderRadius = '10px';
-
-      /*
-        Mantém a borda normal.
-      */
-
-      box.style.boxShadow =
-        'inset 0 0 0 1px rgba(0,0,0,.75),0 1px 2px #000';
-    });
-
-  stats
-    .querySelectorAll('.fill')
-    .forEach(fill => {
-      const box = fill.parentElement;
-
-      const value =
-        Math.max(
-          0,
-          Math.min(
-            10,
-            Number(box.dataset.value) || 0
-          )
-        );
-
-      const percent =
-        Math.max(
-          0,
-          Math.min(
-            100,
-            value * 10
-          )
-        );
-
-      fill.style.left = '5px';
-      fill.style.top = '5px';
-      fill.style.bottom = '5px';
-
-      fill.style.width =
-        percent >= 100
-          ? 'calc(100% - 10px)'
-          : `${percent}%`;
-
-      fill.style.maxWidth =
-        'calc(100% - 10px)';
-
-      fill.style.borderRadius =
-        '6px';
-
-      /*
-        Degradê suave no restante
-        da área da barra.
-      */
-
-      fill.style.boxShadow =
-        '0 0 8px rgba(0,0,0,.12)';
-    });
-
-  /*
-    Fonte da edição = fonte da exportação.
-    Remove o contorno duplicado.
-  */
-
-  stats
-    .querySelectorAll('.name')
-    .forEach(name => {
-      name.style.fontFamily =
-        "'Roboto Condensed', Arial, sans-serif";
-
-      name.style.fontWeight =
-        '700';
-
-      name.style.fontStyle =
-        'italic';
-
-      name.style.webkitTextStroke =
-        '0';
-
-      name.style.textShadow =
-        'none';
-
-      name.style.color =
-        '#fff';
-
-      name.style.position =
-        'absolute';
-
-      name.style.inset =
-        '0';
-
-      name.style.display =
-        'flex';
-
-      name.style.alignItems =
-        'center';
-
-      name.style.justifyContent =
-        'center';
-
-      name.style.zIndex =
-        '5';
-    });
-
-  return stats;
 }
 
 /* =========================
@@ -702,9 +500,7 @@ document.getElementById(
     button.textContent;
 
   button.disabled = true;
-
-  button.textContent =
-    'Saving...';
+  button.textContent = 'Saving...';
 
   let wrap = null;
 
@@ -726,28 +522,125 @@ document.getElementById(
       await document.fonts.ready;
     }
 
-    const stats =
-      makeExportStats();
-
-    wrap =
-      document.createElement(
-        'div'
-      );
-
     /*
-      NÃO usa o tamanho inteiro
-      do #app.
-
-      Isso evita aquele PNG gigante
-      e mantém a proporção da interface.
+      PEGA O TAMANHO REAL DO GRID.
+      NÃO USA O #app.
+      Isso impede a exportação de
+      criar uma área diferente da interface.
     */
 
     const gridRect =
       grid.getBoundingClientRect();
 
     const width =
-      Math.round(
-        gridRect.width
+      Math.round(gridRect.width);
+
+    /*
+      CLONA SOMENTE O GRID.
+    */
+
+    const stats =
+      grid.cloneNode(true);
+
+    stats
+      .querySelectorAll('.remove')
+      .forEach(x => x.remove());
+
+    /*
+      CORREÇÃO PRINCIPAL:
+      copia a largura REAL da barra
+      que está aparecendo na edição.
+
+      Assim o PNG não altera o preenchimento.
+    */
+
+    const originals =
+      [...grid.querySelectorAll('.box')];
+
+    const clones =
+      [...stats.querySelectorAll('.box')];
+
+    originals.forEach(
+      (original, index) => {
+
+        const clone =
+          clones[index];
+
+        if (!clone) return;
+
+        const originalFill =
+          original.querySelector(
+            '.fill'
+          );
+
+        const cloneFill =
+          clone.querySelector(
+            '.fill'
+          );
+
+        if (
+          !originalFill ||
+          !cloneFill
+        ) {
+          return;
+        }
+
+        const originalBoxRect =
+          original.getBoundingClientRect();
+
+        const originalFillRect =
+          originalFill.getBoundingClientRect();
+
+        /*
+          largura visual EXATA
+          da barra no editor
+        */
+
+        const left =
+          originalFillRect.left -
+          originalBoxRect.left;
+
+        const available =
+          originalBoxRect.width -
+          left -
+          5;
+
+        const fillWidth =
+          Math.max(
+            0,
+            Math.min(
+              originalFillRect.width,
+              available
+            )
+          );
+
+        cloneFill.style.left =
+          left + 'px';
+
+        cloneFill.style.width =
+          fillWidth + 'px';
+
+        cloneFill.style.right =
+          'auto';
+
+        cloneFill.style.maxWidth =
+          available + 'px';
+
+        cloneFill.style.top =
+          '5px';
+
+        cloneFill.style.bottom =
+          '5px';
+      }
+    );
+
+    /*
+      CONTAINER DE EXPORTAÇÃO
+    */
+
+    wrap =
+      document.createElement(
+        'div'
       );
 
     wrap.style.position =
@@ -781,75 +674,12 @@ document.getElementById(
     );
 
     /*
-      Linha branca fica na exportação.
+      CANVAS DOS STATS
     */
-
-    const line =
-      document.createElement(
-        'div'
-      );
-
-    line.style.width =
-      '440px';
-
-    line.style.maxWidth =
-      '70%';
-
-    line.style.height =
-      '3px';
-
-    line.style.margin =
-      '16px auto 0';
-
-    line.style.background =
-      'linear-gradient(' +
-      '90deg,' +
-      'transparent,' +
-      '#53606a,' +
-      '#a5afb6,' +
-      '#53606a,' +
-      'transparent' +
-      ')';
-
-    line.style.boxShadow =
-      '0 1px 5px #000';
-
-    /*
-      Coloca a linha antes dos stats
-      só no canvas de exportação.
-    */
-
-    const exportContent =
-      document.createElement(
-        'div'
-      );
-
-    exportContent.style.width =
-      '100%';
-
-    exportContent.style.background =
-      'transparent';
-
-    exportContent.style.padding =
-      '0';
-
-    exportContent.appendChild(
-      line
-    );
-
-    exportContent.appendChild(
-      stats
-    );
-
-    wrap.innerHTML = '';
-
-    wrap.appendChild(
-      exportContent
-    );
 
     const scale = 3;
 
-    const canvas =
+    const statsCanvas =
       await html2canvas(
         wrap,
         {
@@ -862,9 +692,7 @@ document.getElementById(
       );
 
     /*
-      =========================
-      TITLE
-      =========================
+      TÍTULO
     */
 
     const title =
@@ -873,23 +701,29 @@ document.getElementById(
       );
 
     const titleText =
-      title.textContent ||
-      'Name';
+      title.textContent || 'Name';
 
     const cs =
       getComputedStyle(title);
 
-    const fontSize =
+    const originalFontSize =
       parseFloat(
         cs.fontSize
-      ) || 72;
+      ) || 64;
 
-    const titleHeight =
+    const scaledFontSize =
       Math.round(
-        fontSize *
-        1.5 *
-        scale
+        originalFontSize * scale
       );
+
+    const titleH =
+      Math.round(
+        scaledFontSize * 1.5
+      );
+
+    /*
+      CANVAS FINAL
+    */
 
     const out =
       document.createElement(
@@ -897,11 +731,11 @@ document.getElementById(
       );
 
     out.width =
-      canvas.width;
+      statsCanvas.width;
 
     out.height =
-      canvas.height +
-      titleHeight;
+      statsCanvas.height +
+      titleH;
 
     const ctx =
       out.getContext('2d');
@@ -914,7 +748,7 @@ document.getElementById(
     );
 
     /*
-      Título
+      TÍTULO
     */
 
     ctx.save();
@@ -926,18 +760,28 @@ document.getElementById(
       'middle';
 
     const fontFamily =
-      "'Roboto Condensed', Arial, sans-serif";
+      cs.fontFamily ||
+      'Arial';
+
+    const fontWeight =
+      cs.fontWeight ||
+      '700';
+
+    const fontStyle =
+      cs.fontStyle ||
+      'normal';
 
     ctx.font =
-      '700 italic ' +
-      Math.round(
-        fontSize * scale
-      ) +
+      fontStyle +
+      ' ' +
+      fontWeight +
+      ' ' +
+      scaledFontSize +
       'px ' +
       fontFamily;
 
-    const titleY =
-      titleHeight / 2;
+    ctx.lineJoin =
+      'round';
 
     const isGradient =
       title.classList.contains(
@@ -947,9 +791,10 @@ document.getElementById(
         'title-custom-gradient'
       );
 
-    if (isGradient) {
+    const centerY =
+      titleH / 2;
 
-      let gradient;
+    if (isGradient) {
 
       if (
         title.classList.contains(
@@ -969,29 +814,31 @@ document.getElementById(
           ).trim() ||
           '#396cff';
 
-        gradient =
+        const g =
           ctx.createLinearGradient(
             0,
-            titleY -
-              fontSize * scale / 2,
+            centerY -
+              scaledFontSize / 2,
             0,
-            titleY +
-              fontSize * scale / 2
+            centerY +
+              scaledFontSize / 2
           );
 
-        gradient.addColorStop(
+        g.addColorStop(
           0,
           top
         );
 
-        gradient.addColorStop(
+        g.addColorStop(
           1,
           bottom
         );
 
+        ctx.fillStyle = g;
+
       } else {
 
-        gradient =
+        const g =
           ctx.createLinearGradient(
             0,
             0,
@@ -999,49 +846,48 @@ document.getElementById(
             0
           );
 
-        gradient.addColorStop(
+        g.addColorStop(
           0,
           '#ff0000'
         );
 
-        gradient.addColorStop(
+        g.addColorStop(
           .14,
           '#ff7a00'
         );
 
-        gradient.addColorStop(
+        g.addColorStop(
           .28,
           '#fff000'
         );
 
-        gradient.addColorStop(
+        g.addColorStop(
           .42,
           '#25ff00'
         );
 
-        gradient.addColorStop(
+        g.addColorStop(
           .56,
           '#00d9ff'
         );
 
-        gradient.addColorStop(
+        g.addColorStop(
           .70,
           '#396cff'
         );
 
-        gradient.addColorStop(
+        g.addColorStop(
           .84,
           '#9d39ff'
         );
 
-        gradient.addColorStop(
+        g.addColorStop(
           1,
           '#ff00d9'
         );
-      }
 
-      ctx.fillStyle =
-        gradient;
+        ctx.fillStyle = g;
+      }
 
     } else {
 
@@ -1051,26 +897,46 @@ document.getElementById(
     }
 
     /*
-      Mesmo texto da exportação,
-      sem o contorno duplicado.
+      CONTORNO DO TÍTULO
     */
+
+    const stroke =
+      2 * scale;
+
+    if (
+      stroke > 0 &&
+      !isGradient
+    ) {
+
+      ctx.lineWidth =
+        stroke;
+
+      ctx.strokeStyle =
+        '#000000';
+
+      ctx.strokeText(
+        titleText,
+        out.width / 2,
+        centerY
+      );
+    }
 
     ctx.fillText(
       titleText,
       out.width / 2,
-      titleY
+      centerY
     );
 
     ctx.restore();
 
     /*
-      Stats ficam logo abaixo
+      STATS
     */
 
     ctx.drawImage(
-      canvas,
+      statsCanvas,
       0,
-      titleHeight
+      titleH
     );
 
     /*
@@ -1090,9 +956,7 @@ document.getElementById(
         'image/png'
       );
 
-    document.body.appendChild(
-      a
-    );
+    document.body.appendChild(a);
 
     a.click();
 
@@ -1112,11 +976,8 @@ document.getElementById(
       wrap.remove();
     }
 
-    button.disabled =
-      false;
-
-    button.textContent =
-      oldText;
+    button.disabled = false;
+    button.textContent = oldText;
   }
 };
 
@@ -1135,24 +996,4 @@ document.getElementById(
   'Spike'
 ].forEach(
   x => addBox(x, 5)
-);
-
-/* =========================
-   REMOVE TITLE STAR
-========================= */
-
-const starStyle =
-  document.createElement(
-    'style'
-  );
-
-starStyle.textContent = `
-  #styleTitle::before {
-    display: none !important;
-    content: none !important;
-  }
-`;
-
-document.head.appendChild(
-  starStyle
 );
