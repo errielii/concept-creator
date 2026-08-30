@@ -22,25 +22,22 @@ function color(v){
 function update(box){
 
   const v = Number(box.dataset.value) || 0;
-
   const c = color(v);
 
   box.style.setProperty('--color',c);
 
   const fill = box.querySelector('.fill');
-
   const rainbow = box.dataset.rainbow === 'true';
 
   fill.classList.remove('rainbow');
-
   fill.style.background = c;
 
-  box.classList.toggle(
-    'rainbow-border',
-    rainbow
-  );
+  box.classList.toggle('rainbow-border',rainbow);
 
-  /* nunca deixa o preenchimento passar da borda */
+  /*
+    Calcula a largura pela área interna real.
+    O preenchimento nunca ultrapassa a borda.
+  */
   const innerWidth = Math.max(
     0,
     box.clientWidth - 10
@@ -246,7 +243,6 @@ document.getElementById(
     );
 
   title.classList.remove(
-    'title-ultra',
     'title-gradient',
     'title-custom-gradient'
   );
@@ -270,11 +266,10 @@ document.getElementById(
     );
 
   title.classList.toggle(
-    'title-ultra'
+    'title-gradient'
   );
 
   title.classList.remove(
-    'title-gradient',
     'title-custom-gradient'
   );
 };
@@ -307,7 +302,6 @@ titleGradient.onclick = () => {
     );
 
   title.classList.remove(
-    'title-ultra',
     'title-gradient'
   );
 
@@ -555,17 +549,48 @@ document.getElementById(
     const stats =
       grid.cloneNode(true);
 
-    /*
-      classe usada somente
-      durante a exportação
-    */
-    stats.classList.add(
-      'exporting-stats'
-    );
-
     stats
       .querySelectorAll('.remove')
       .forEach(x => x.remove());
+
+    stats
+      .querySelectorAll('.fill')
+      .forEach(fill => {
+
+        fill.style.left = '5px';
+        fill.style.top = '5px';
+        fill.style.bottom = '5px';
+
+        fill.style.maxWidth =
+          'calc(100% - 10px)';
+
+        const parent =
+          fill.parentElement;
+
+        if(parent){
+
+          const innerWidth =
+            Math.max(
+              0,
+              parent.clientWidth - 10
+            );
+
+          const value =
+            Number(
+              parent.dataset.value
+            ) || 0;
+
+          fill.style.width =
+            Math.min(
+              innerWidth,
+              Math.max(
+                0,
+                innerWidth *
+                (value / 10)
+              )
+            ) + 'px';
+        }
+      });
 
     wrap =
       document.createElement(
@@ -620,8 +645,7 @@ document.getElementById(
 
     const scaledFontSize =
       Math.round(
-        originalFontSize *
-        scale
+        originalFontSize * scale
       );
 
     const titleH =
@@ -659,15 +683,15 @@ document.getElementById(
     ctx.textBaseline =
       'middle';
 
-    const fontFamily =
+    let fontFamily =
       cs.fontFamily ||
       'Arial';
 
-    const fontWeight =
+    let fontWeight =
       cs.fontWeight ||
       '700';
 
-    const fontStyle =
+    let fontStyle =
       cs.fontStyle ||
       'normal';
 
@@ -796,9 +820,6 @@ document.getElementById(
         '#ffffff';
     }
 
-    /*
-      contorno somente quando necessário
-    */
     const stroke =
       2 * scale;
 
@@ -825,76 +846,6 @@ document.getElementById(
       out.width / 2,
       centerY
     );
-
-    /*
-      linha branca/divisória:
-      mesma linha da edição,
-      agora também entra no PNG
-    */
-    const lineY =
-      titleH -
-      (28 * scale) -
-      (1.5 * scale);
-
-    const lineWidth =
-      Math.min(
-        440 * scale,
-        out.width * 0.70
-      );
-
-    const lineGradient =
-      ctx.createLinearGradient(
-        out.width / 2 - lineWidth / 2,
-        0,
-        out.width / 2 + lineWidth / 2,
-        0
-      );
-
-    lineGradient.addColorStop(
-      0,
-      'rgba(83,96,106,0)'
-    );
-
-    lineGradient.addColorStop(
-      .20,
-      '#53606a'
-    );
-
-    lineGradient.addColorStop(
-      .50,
-      '#a5afb6'
-    );
-
-    lineGradient.addColorStop(
-      .80,
-      '#53606a'
-    );
-
-    lineGradient.addColorStop(
-      1,
-      'rgba(83,96,106,0)'
-    );
-
-    ctx.save();
-
-    ctx.fillStyle =
-      lineGradient;
-
-    ctx.shadowColor =
-      'rgba(0,0,0,.9)';
-
-    ctx.shadowBlur =
-      5 * scale;
-
-    ctx.fillRect(
-      out.width / 2 -
-        lineWidth / 2,
-      lineY,
-      lineWidth,
-      3 * scale
-    );
-
-    ctx.restore();
 
     ctx.restore();
 
@@ -961,15 +912,4 @@ document.getElementById(
   'Spike'
 ].forEach(
   x => addBox(x,5)
-);
-
-window.addEventListener(
-  'resize',
-  () => {
-    [
-      ...grid.children
-    ].forEach(
-      box => update(box)
-    );
-  }
 );
