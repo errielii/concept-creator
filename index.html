@@ -152,7 +152,9 @@ body{
   text-shadow:none;
 }
 
-/* ULTRA */
+/* =========================
+   ULTRA
+========================= */
 
 #styleTitle.title-ultra{
   font-family:'Orbitron',Arial,sans-serif !important;
@@ -272,10 +274,6 @@ body{
 
   padding:0 12px;
 
-  /*
-    FONTE CORRIGIDA
-  */
-
   font-family:'Roboto Condensed',Arial,sans-serif !important;
 
   font-size:24px;
@@ -288,9 +286,15 @@ body{
 
   color:#fff;
 
-  -webkit-text-stroke:1px #000;
+  -webkit-text-stroke:0.8px #000;
 
-  text-shadow:none;
+  text-shadow:
+    1px 0 #000,
+    -1px 0 #000,
+    0 1px #000,
+    0 -1px #000;
+
+  paint-order:stroke fill;
 
   pointer-events:none;
 }
@@ -644,11 +648,19 @@ button:hover{
   .name{
     font-size:22px;
 
+    font-weight:700;
+
     font-style:italic !important;
 
-    -webkit-text-stroke:1px #000;
+    -webkit-text-stroke:0.8px #000;
 
-    text-shadow:none;
+    text-shadow:
+      1px 0 #000,
+      -1px 0 #000,
+      0 1px #000,
+      0 -1px #000;
+
+    paint-order:stroke fill;
   }
 
   .remove{
@@ -678,6 +690,7 @@ button:hover{
   <div id="controls">
 
     <div class="row">
+
       <input
         id="styleName"
         type="text"
@@ -691,11 +704,13 @@ button:hover{
       <button id="gradientName">
         Ultra
       </button>
+
     </div>
 
     <div class="row">
 
       <div class="colorControl">
+
         <span>Title</span>
 
         <input
@@ -703,6 +718,7 @@ button:hover{
           type="color"
           value="#aaa5ff"
         >
+
       </div>
 
       <div class="colorControl">
@@ -838,7 +854,8 @@ function update(box){
       )
     );
 
-  const c = color(v);
+  const c =
+    color(v);
 
   box.style.setProperty(
     '--color',
@@ -866,11 +883,8 @@ function update(box){
 
 
   /*
-    AGORA A BARRA PODE CHEGAR
-    ATÉ O FINAL DO STAT.
-
-    Antes tinha * 0.8,
-    então 10 só preenchia 80%.
+    A barra usa exatamente a área interna
+    disponível, sem ultrapassar o limite.
   */
 
   const available =
@@ -882,7 +896,10 @@ function update(box){
   const fillWidth =
     Math.min(
       available,
-      available * (v / 10)
+      Math.max(
+        0,
+        available * (v / 10)
+      )
     );
 
   fill.style.left =
@@ -971,6 +988,7 @@ function addBox(
     e.stopPropagation();
 
     box.remove();
+
   };
 
 
@@ -1037,6 +1055,7 @@ function addBox(
         e.preventDefault();
 
         setValue(e);
+
       }
     }
   );
@@ -1084,14 +1103,26 @@ function setValue(e){
   const r =
     dragging.getBoundingClientRect();
 
-  const v =
+  /*
+    Usa a posição relativa ao box.
+    Clamp de 0 a 10 garante que nunca passa
+    do começo ou do fim.
+  */
+
+  let x =
+    e.clientX - r.left;
+
+  x =
     Math.max(
       0,
       Math.min(
-        10,
-        ((e.clientX - r.left) / r.width) * 10
+        r.width,
+        x
       )
     );
+
+  const v =
+    (x / r.width) * 10;
 
   dragging.dataset.value =
     v;
@@ -1554,8 +1585,6 @@ document.getElementById(
           );
 
 
-        /* CORRIGIDO: chega até 100% */
-
         const fillWidth =
           Math.min(
             available,
@@ -1750,11 +1779,9 @@ document.getElementById(
       cs.fontFamily ||
       'Arial';
 
-
     const fontWeight =
       cs.fontWeight ||
       '700';
-
 
     const fontStyle =
       cs.fontStyle ||
@@ -1899,6 +1926,10 @@ document.getElementById(
         '#ffffff';
     }
 
+
+    /*
+      Contorno do título
+    */
 
     ctx.lineWidth =
       2 * scale;
