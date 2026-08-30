@@ -1,100 +1,132 @@
 const grid = document.getElementById('grid');
 const app = document.getElementById('app');
 
-if(
+if (
   window.matchMedia('(pointer:coarse)').matches ||
-  Math.min(window.innerWidth,screen.width) <= 900
-){
+  Math.min(window.innerWidth, screen.width) <= 900
+) {
   document.documentElement.classList.add('mobile-device');
 }
 
 let dragging = null;
 let rainbowMode = false;
 
-function color(v){
-  if(v >= 10) return '#ff00d9';
-  if(v >= 8) return '#25ff00';
-  if(v >= 5) return '#fff000';
-  if(v >= 2) return '#ff7a00';
+/* =========================
+   COLORS
+========================= */
+
+function color(v) {
+  if (v >= 10) return '#ff00d9';
+  if (v >= 8) return '#25ff00';
+  if (v >= 5) return '#fff000';
+  if (v >= 2) return '#ff7a00';
   return '#ff0000';
 }
 
-function update(box){
+/* =========================
+   UPDATE STAT
+========================= */
 
-  const v = Number(box.dataset.value) || 0;
+function update(box) {
+  const v = Math.max(
+    0,
+    Math.min(10, Number(box.dataset.value) || 0)
+  );
+
+  box.dataset.value = v;
+
   const c = color(v);
 
-  box.style.setProperty('--color',c);
+  box.style.setProperty('--color', c);
 
   const fill = box.querySelector('.fill');
+
+  if (!fill) return;
+
   const rainbow = box.dataset.rainbow === 'true';
 
-  fill.classList.remove('rainbow');
-  fill.style.background = c;
-
-  box.classList.toggle('rainbow-border',rainbow);
+  box.classList.toggle('rainbow-border', rainbow);
 
   /*
-    Calcula a largura pela área interna real.
-    O preenchimento nunca ultrapassa a borda.
+    IMPORTANTE:
+    O preenchimento usa a área INTERNA da box.
+    Assim nunca passa da borda, mesmo em 10/10.
   */
-  const innerWidth = Math.max(
+
+  const percent = Math.max(
     0,
-    box.clientWidth - 10
+    Math.min(100, v * 10)
   );
 
-  const fillWidth = Math.min(
-    innerWidth,
-    Math.max(
-      0,
-      innerWidth * (v / 10)
-    )
-  );
+  fill.style.left = '5px';
+  fill.style.right = 'auto';
+  fill.style.top = '5px';
+  fill.style.bottom = '5px';
 
-  fill.style.width = fillWidth + 'px';
+  fill.style.width =
+    `calc(${percent}% - ${percent >= 100 ? 10 : 0}px)`;
+
+  fill.style.maxWidth =
+    'calc(100% - 10px)';
+
+  if (rainbow) {
+    fill.style.background = `
+      linear-gradient(
+        90deg,
+        #ff0000,
+        #ff7a00,
+        #fff000,
+        #25ff00,
+        #00d9ff,
+        #396cff,
+        #9d39ff,
+        #ff00d9
+      )
+    `;
+    fill.style.backgroundSize = '100% 100%';
+    fill.style.animation = 'none';
+  } else {
+    fill.style.background = c;
+    fill.style.animation = 'none';
+  }
 }
 
-function addBox(name,value=5){
+/* =========================
+   ADD STAT
+========================= */
 
+function addBox(name, value = 5) {
   const box = document.createElement('div');
 
   box.className = 'box';
 
   box.dataset.name = name;
 
-  box.dataset.value =
-    Math.max(
-      0,
-      Math.min(
-        10,
-        Number(value) || 5
-      )
-    );
+  box.dataset.value = Math.max(
+    0,
+    Math.min(
+      10,
+      Number(value) || 5
+    )
+  );
 
   box.dataset.rainbow = 'false';
 
   const fill = document.createElement('div');
-
   fill.className = 'fill';
 
   const text = document.createElement('div');
-
   text.className = 'name';
-
   text.textContent = name;
 
   const remove = document.createElement('button');
 
   remove.className = 'remove';
-
   remove.textContent = '×';
-
   remove.title = 'Remove stat';
 
   remove.onclick = e => {
-
     e.stopPropagation();
-
     box.remove();
   };
 
@@ -108,14 +140,19 @@ function addBox(name,value=5){
 
   update(box);
 
+  /* =========================
+     DRAG VALUE
+  ========================= */
+
   box.addEventListener(
     'pointerdown',
     e => {
-
-      if(
+      if (
         e.target === remove ||
         rainbowMode
-      ) return;
+      ) {
+        return;
+      }
 
       e.preventDefault();
 
@@ -125,11 +162,9 @@ function addBox(name,value=5){
 
       box.style.cursor = 'grabbing';
 
-      try{
-        box.setPointerCapture(
-          e.pointerId
-        );
-      }catch(_){}
+      try {
+        box.setPointerCapture(e.pointerId);
+      } catch (_) {}
 
       setValue(e);
     }
@@ -138,11 +173,8 @@ function addBox(name,value=5){
   box.addEventListener(
     'pointermove',
     e => {
-
-      if(dragging === box){
-
+      if (dragging === box) {
         e.preventDefault();
-
         setValue(e);
       }
     }
@@ -151,14 +183,10 @@ function addBox(name,value=5){
   box.addEventListener(
     'pointerup',
     () => {
-
-      if(dragging === box){
-
+      if (dragging === box) {
         dragging = null;
 
-        app.classList.remove(
-          'dragging'
-        );
+        app.classList.remove('dragging');
 
         box.style.cursor = 'grab';
       }
@@ -168,34 +196,34 @@ function addBox(name,value=5){
   box.addEventListener(
     'pointercancel',
     () => {
-
-      if(dragging === box){
-
+      if (dragging === box) {
         dragging = null;
 
-        app.classList.remove(
-          'dragging'
-        );
+        app.classList.remove('dragging');
+
+        box.style.cursor = 'grab';
       }
     }
   );
 }
 
-function setValue(e){
+/* =========================
+   SET VALUE
+========================= */
 
-  if(!dragging) return;
+function setValue(e) {
+  if (!dragging) return;
 
   const r =
     dragging.getBoundingClientRect();
 
-  const v =
-    Math.max(
-      0,
-      Math.min(
-        10,
-        ((e.clientX - r.left) / r.width) * 10
-      )
-    );
+  const v = Math.max(
+    0,
+    Math.min(
+      10,
+      ((e.clientX - r.left) / r.width) * 10
+    )
+  );
 
   dragging.dataset.value = v;
 
@@ -205,12 +233,9 @@ function setValue(e){
 document.addEventListener(
   'pointerup',
   () => {
-
     dragging = null;
 
-    app.classList.remove(
-      'dragging'
-    );
+    app.classList.remove('dragging');
   }
 );
 
@@ -221,7 +246,6 @@ document.addEventListener(
 document.getElementById(
   'applyName'
 ).onclick = () => {
-
   const value =
     document.getElementById(
       'styleName'
@@ -233,10 +257,13 @@ document.getElementById(
     value || 'Name';
 };
 
+/* =========================
+   TITLE COLOR
+========================= */
+
 document.getElementById(
   'titleColor'
 ).oninput = e => {
-
   const title =
     document.getElementById(
       'styleTitle'
@@ -256,23 +283,45 @@ document.getElementById(
     '2px #000';
 };
 
+/* =========================
+   ULTRA
+========================= */
+
 document.getElementById(
   'gradientName'
 ).onclick = () => {
-
   const title =
     document.getElementById(
       'styleTitle'
     );
 
-  title.classList.toggle(
-    'title-gradient'
-  );
+  const active =
+    title.classList.toggle(
+      'title-gradient'
+    );
 
   title.classList.remove(
     'title-custom-gradient'
   );
+
+  /*
+    Ultra agora só controla
+    o modo do título.
+    Não altera tamanho,
+    posição ou stats.
+  */
+
+  if (active) {
+    title.style.webkitTextFillColor =
+      'transparent';
+  } else {
+    title.style.webkitTextFillColor = '';
+  }
 };
+
+/* =========================
+   CUSTOM TITLE GRADIENT
+========================= */
 
 const titleGradient =
   document.getElementById(
@@ -290,7 +339,6 @@ const titleGradientBottom =
   );
 
 titleGradient.onclick = () => {
-
   const title =
     document.getElementById(
       'styleTitle'
@@ -305,8 +353,7 @@ titleGradient.onclick = () => {
     'title-gradient'
   );
 
-  if(active){
-
+  if (active) {
     title.style.setProperty(
       '--title-top',
       titleGradientTop.value
@@ -316,6 +363,11 @@ titleGradient.onclick = () => {
       '--title-bottom',
       titleGradientBottom.value
     );
+
+    title.style.webkitTextFillColor =
+      'transparent';
+  } else {
+    title.style.webkitTextFillColor = '';
   }
 };
 
@@ -323,9 +375,7 @@ titleGradient.onclick = () => {
   titleGradientTop,
   titleGradientBottom
 ].forEach(input => {
-
   input.oninput = () => {
-
     const title =
       document.getElementById(
         'styleTitle'
@@ -344,13 +394,12 @@ titleGradient.onclick = () => {
 });
 
 /* =========================
-   ADD STAT
+   ADD BUTTON
 ========================= */
 
 document.getElementById(
   'add'
 ).onclick = () => {
-
   const name =
     document.getElementById(
       'statName'
@@ -391,7 +440,6 @@ const rainbowHint =
   );
 
 rainbowButton.onclick = () => {
-
   rainbowMode = !rainbowMode;
 
   rainbowButton.classList.toggle(
@@ -408,15 +456,16 @@ rainbowButton.onclick = () => {
 grid.addEventListener(
   'click',
   e => {
-
     const box =
       e.target.closest('.box');
 
-    if(
+    if (
       !box ||
       e.target.closest('.remove') ||
       !rainbowMode
-    ) return;
+    ) {
+      return;
+    }
 
     box.dataset.rainbow =
       box.dataset.rainbow === 'true'
@@ -434,13 +483,10 @@ grid.addEventListener(
 document.getElementById(
   'zero'
 ).onclick = () => {
-
   [
     ...grid.children
   ].forEach(box => {
-
     box.dataset.value = 0;
-
     update(box);
   });
 };
@@ -448,13 +494,10 @@ document.getElementById(
 document.getElementById(
   'ten'
 ).onclick = () => {
-
   [
     ...grid.children
   ].forEach(box => {
-
     box.dataset.value = 10;
-
     update(box);
   });
 };
@@ -462,7 +505,6 @@ document.getElementById(
 document.getElementById(
   'clear'
 ).onclick = () => {
-
   grid.innerHTML = '';
 };
 
@@ -470,8 +512,7 @@ document.getElementById(
    FILE NAME
 ========================= */
 
-function exportFileName(ext){
-
+function exportFileName(ext) {
   const style =
     (
       document.getElementById(
@@ -490,9 +531,156 @@ function exportFileName(ext){
     )
     .trim() || 'Name';
 
-  return style +
+  return (
+    style +
     ' - Concept.' +
-    ext;
+    ext
+  );
+}
+
+/* =========================
+   EXPORT HELPERS
+========================= */
+
+function makeExportStats() {
+  const stats =
+    grid.cloneNode(true);
+
+  stats
+    .querySelectorAll('.remove')
+    .forEach(x => x.remove());
+
+  /*
+    Exporta exatamente a largura
+    visual do grid.
+  */
+
+  stats.style.width = '100%';
+  stats.style.maxWidth = '800px';
+  stats.style.margin = '0 auto';
+
+  stats
+    .querySelectorAll('.box')
+    .forEach(box => {
+      box.style.overflow = 'hidden';
+      box.style.position = 'relative';
+
+      /*
+        Fundo restante:
+        aproximadamente 70% transparente.
+      */
+
+      box.style.background =
+        'linear-gradient(' +
+        '180deg,' +
+        'rgba(0,0,0,0.30) 0%,' +
+        'rgba(0,0,0,0.20) 55%,' +
+        'rgba(0,0,0,0.08) 100%' +
+        ')';
+
+      box.style.borderRadius = '10px';
+
+      /*
+        Mantém a borda normal.
+      */
+
+      box.style.boxShadow =
+        'inset 0 0 0 1px rgba(0,0,0,.75),0 1px 2px #000';
+    });
+
+  stats
+    .querySelectorAll('.fill')
+    .forEach(fill => {
+      const box = fill.parentElement;
+
+      const value =
+        Math.max(
+          0,
+          Math.min(
+            10,
+            Number(box.dataset.value) || 0
+          )
+        );
+
+      const percent =
+        Math.max(
+          0,
+          Math.min(
+            100,
+            value * 10
+          )
+        );
+
+      fill.style.left = '5px';
+      fill.style.top = '5px';
+      fill.style.bottom = '5px';
+
+      fill.style.width =
+        percent >= 100
+          ? 'calc(100% - 10px)'
+          : `${percent}%`;
+
+      fill.style.maxWidth =
+        'calc(100% - 10px)';
+
+      fill.style.borderRadius =
+        '6px';
+
+      /*
+        Degradê suave no restante
+        da área da barra.
+      */
+
+      fill.style.boxShadow =
+        '0 0 8px rgba(0,0,0,.12)';
+    });
+
+  /*
+    Fonte da edição = fonte da exportação.
+    Remove o contorno duplicado.
+  */
+
+  stats
+    .querySelectorAll('.name')
+    .forEach(name => {
+      name.style.fontFamily =
+        "'Roboto Condensed', Arial, sans-serif";
+
+      name.style.fontWeight =
+        '700';
+
+      name.style.fontStyle =
+        'italic';
+
+      name.style.webkitTextStroke =
+        '0';
+
+      name.style.textShadow =
+        'none';
+
+      name.style.color =
+        '#fff';
+
+      name.style.position =
+        'absolute';
+
+      name.style.inset =
+        '0';
+
+      name.style.display =
+        'flex';
+
+      name.style.alignItems =
+        'center';
+
+      name.style.justifyContent =
+        'center';
+
+      name.style.zIndex =
+        '5';
+    });
+
+  return stats;
 }
 
 /* =========================
@@ -508,7 +696,7 @@ document.getElementById(
       'savePng'
     );
 
-  if(button.disabled) return;
+  if (button.disabled) return;
 
   const oldText =
     button.textContent;
@@ -520,92 +708,71 @@ document.getElementById(
 
   let wrap = null;
 
-  try{
+  try {
 
-    if(
+    if (
       typeof html2canvas !==
       'function'
-    ){
+    ) {
       throw new Error(
         'html2canvas missing'
       );
     }
 
-    if(
+    if (
       document.fonts &&
       document.fonts.ready
-    ){
+    ) {
       await document.fonts.ready;
     }
 
-    const appRect =
-      app.getBoundingClientRect();
-
-    const width =
-      Math.round(
-        appRect.width
-      );
-
     const stats =
-      grid.cloneNode(true);
-
-    stats
-      .querySelectorAll('.remove')
-      .forEach(x => x.remove());
-
-    stats
-      .querySelectorAll('.fill')
-      .forEach(fill => {
-
-        fill.style.left = '5px';
-        fill.style.top = '5px';
-        fill.style.bottom = '5px';
-
-        fill.style.maxWidth =
-          'calc(100% - 10px)';
-
-        const parent =
-          fill.parentElement;
-
-        if(parent){
-
-          const innerWidth =
-            Math.max(
-              0,
-              parent.clientWidth - 10
-            );
-
-          const value =
-            Number(
-              parent.dataset.value
-            ) || 0;
-
-          fill.style.width =
-            Math.min(
-              innerWidth,
-              Math.max(
-                0,
-                innerWidth *
-                (value / 10)
-              )
-            ) + 'px';
-        }
-      });
+      makeExportStats();
 
     wrap =
       document.createElement(
         'div'
       );
 
-    wrap.style.cssText =
-      'position:absolute;' +
-      'left:-100000px;' +
-      'top:0;' +
-      'width:' +
-      width +
-      'px;' +
-      'padding:0;' +
-      'background:transparent;';
+    /*
+      NÃO usa o tamanho inteiro
+      do #app.
+
+      Isso evita aquele PNG gigante
+      e mantém a proporção da interface.
+    */
+
+    const gridRect =
+      grid.getBoundingClientRect();
+
+    const width =
+      Math.round(
+        gridRect.width
+      );
+
+    wrap.style.position =
+      'absolute';
+
+    wrap.style.left =
+      '-100000px';
+
+    wrap.style.top =
+      '0';
+
+    wrap.style.width =
+      width + 'px';
+
+    wrap.style.padding =
+      '0';
+
+    wrap.style.margin =
+      '0';
+
+    wrap.style.background =
+      'transparent';
+
+    wrap.style.overflow =
+      'visible';
 
     wrap.appendChild(stats);
 
@@ -613,19 +780,92 @@ document.getElementById(
       wrap
     );
 
+    /*
+      Linha branca fica na exportação.
+    */
+
+    const line =
+      document.createElement(
+        'div'
+      );
+
+    line.style.width =
+      '440px';
+
+    line.style.maxWidth =
+      '70%';
+
+    line.style.height =
+      '3px';
+
+    line.style.margin =
+      '16px auto 0';
+
+    line.style.background =
+      'linear-gradient(' +
+      '90deg,' +
+      'transparent,' +
+      '#53606a,' +
+      '#a5afb6,' +
+      '#53606a,' +
+      'transparent' +
+      ')';
+
+    line.style.boxShadow =
+      '0 1px 5px #000';
+
+    /*
+      Coloca a linha antes dos stats
+      só no canvas de exportação.
+    */
+
+    const exportContent =
+      document.createElement(
+        'div'
+      );
+
+    exportContent.style.width =
+      '100%';
+
+    exportContent.style.background =
+      'transparent';
+
+    exportContent.style.padding =
+      '0';
+
+    exportContent.appendChild(
+      line
+    );
+
+    exportContent.appendChild(
+      stats
+    );
+
+    wrap.innerHTML = '';
+
+    wrap.appendChild(
+      exportContent
+    );
+
     const scale = 3;
 
-    const statsCanvas =
+    const canvas =
       await html2canvas(
         wrap,
         {
-          backgroundColor:null,
-          scale:scale,
-          useCORS:true,
-          allowTaint:true,
-          logging:false
+          backgroundColor: null,
+          scale: scale,
+          useCORS: true,
+          allowTaint: true,
+          logging: false
         }
       );
+
+    /*
+      =========================
+      TITLE
+      =========================
+    */
 
     const title =
       document.getElementById(
@@ -633,24 +873,22 @@ document.getElementById(
       );
 
     const titleText =
-      title.textContent || 'Name';
+      title.textContent ||
+      'Name';
 
     const cs =
       getComputedStyle(title);
 
-    const originalFontSize =
+    const fontSize =
       parseFloat(
         cs.fontSize
-      ) || 64;
+      ) || 72;
 
-    const scaledFontSize =
+    const titleHeight =
       Math.round(
-        originalFontSize * scale
-      );
-
-    const titleH =
-      Math.round(
-        scaledFontSize * 1.5
+        fontSize *
+        1.5 *
+        scale
       );
 
     const out =
@@ -659,11 +897,11 @@ document.getElementById(
       );
 
     out.width =
-      statsCanvas.width;
+      canvas.width;
 
     out.height =
-      statsCanvas.height +
-      titleH;
+      canvas.height +
+      titleHeight;
 
     const ctx =
       out.getContext('2d');
@@ -675,6 +913,10 @@ document.getElementById(
       out.height
     );
 
+    /*
+      Título
+    */
+
     ctx.save();
 
     ctx.textAlign =
@@ -683,29 +925,19 @@ document.getElementById(
     ctx.textBaseline =
       'middle';
 
-    let fontFamily =
-      cs.fontFamily ||
-      'Arial';
-
-    let fontWeight =
-      cs.fontWeight ||
-      '700';
-
-    let fontStyle =
-      cs.fontStyle ||
-      'normal';
+    const fontFamily =
+      "'Roboto Condensed', Arial, sans-serif";
 
     ctx.font =
-      fontStyle +
-      ' ' +
-      fontWeight +
-      ' ' +
-      scaledFontSize +
+      '700 italic ' +
+      Math.round(
+        fontSize * scale
+      ) +
       'px ' +
       fontFamily;
 
-    ctx.lineJoin =
-      'round';
+    const titleY =
+      titleHeight / 2;
 
     const isGradient =
       title.classList.contains(
@@ -715,16 +947,15 @@ document.getElementById(
         'title-custom-gradient'
       );
 
-    const centerY =
-      titleH / 2;
+    if (isGradient) {
 
-    if(isGradient){
+      let gradient;
 
-      if(
+      if (
         title.classList.contains(
           'title-custom-gradient'
         )
-      ){
+      ) {
 
         const top =
           cs.getPropertyValue(
@@ -738,31 +969,29 @@ document.getElementById(
           ).trim() ||
           '#396cff';
 
-        const g =
+        gradient =
           ctx.createLinearGradient(
             0,
-            centerY -
-              scaledFontSize / 2,
+            titleY -
+              fontSize * scale / 2,
             0,
-            centerY +
-              scaledFontSize / 2
+            titleY +
+              fontSize * scale / 2
           );
 
-        g.addColorStop(
+        gradient.addColorStop(
           0,
           top
         );
 
-        g.addColorStop(
+        gradient.addColorStop(
           1,
           bottom
         );
 
-        ctx.fillStyle = g;
+      } else {
 
-      }else{
-
-        const g =
+        gradient =
           ctx.createLinearGradient(
             0,
             0,
@@ -770,90 +999,83 @@ document.getElementById(
             0
           );
 
-        g.addColorStop(
+        gradient.addColorStop(
           0,
           '#ff0000'
         );
 
-        g.addColorStop(
+        gradient.addColorStop(
           .14,
           '#ff7a00'
         );
 
-        g.addColorStop(
+        gradient.addColorStop(
           .28,
           '#fff000'
         );
 
-        g.addColorStop(
+        gradient.addColorStop(
           .42,
           '#25ff00'
         );
 
-        g.addColorStop(
+        gradient.addColorStop(
           .56,
           '#00d9ff'
         );
 
-        g.addColorStop(
+        gradient.addColorStop(
           .70,
           '#396cff'
         );
 
-        g.addColorStop(
+        gradient.addColorStop(
           .84,
           '#9d39ff'
         );
 
-        g.addColorStop(
+        gradient.addColorStop(
           1,
           '#ff00d9'
         );
-
-        ctx.fillStyle = g;
       }
 
-    }else{
+      ctx.fillStyle =
+        gradient;
+
+    } else {
 
       ctx.fillStyle =
         cs.color ||
         '#ffffff';
     }
 
-    const stroke =
-      2 * scale;
-
-    if(
-      stroke > 0 &&
-      !isGradient
-    ){
-
-      ctx.lineWidth =
-        stroke;
-
-      ctx.strokeStyle =
-        '#000000';
-
-      ctx.strokeText(
-        titleText,
-        out.width / 2,
-        centerY
-      );
-    }
+    /*
+      Mesmo texto da exportação,
+      sem o contorno duplicado.
+    */
 
     ctx.fillText(
       titleText,
       out.width / 2,
-      centerY
+      titleY
     );
 
     ctx.restore();
 
+    /*
+      Stats ficam logo abaixo
+    */
+
     ctx.drawImage(
-      statsCanvas,
+      canvas,
       0,
-      titleH
+      titleHeight
     );
+
+    /*
+      DOWNLOAD
+    */
 
     const a =
       document.createElement(
@@ -876,7 +1098,7 @@ document.getElementById(
 
     a.remove();
 
-  }catch(err){
+  } catch (err) {
 
     console.error(err);
 
@@ -884,13 +1106,14 @@ document.getElementById(
       'Could not save the image.'
     );
 
-  }finally{
+  } finally {
 
-    if(wrap){
+    if (wrap) {
       wrap.remove();
     }
 
-    button.disabled = false;
+    button.disabled =
+      false;
 
     button.textContent =
       oldText;
@@ -911,5 +1134,25 @@ document.getElementById(
   'Speed',
   'Spike'
 ].forEach(
-  x => addBox(x,5)
+  x => addBox(x, 5)
+);
+
+/* =========================
+   REMOVE TITLE STAR
+========================= */
+
+const starStyle =
+  document.createElement(
+    'style'
+  );
+
+starStyle.textContent = `
+  #styleTitle::before {
+    display: none !important;
+    content: none !important;
+  }
+`;
+
+document.head.appendChild(
+  starStyle
 );
