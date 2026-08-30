@@ -66,7 +66,6 @@ body{
   z-index:20;
 }
 
-/* linha fica na edição e na exportação */
 #styleTitle::after{
   content:"";
 
@@ -94,10 +93,28 @@ body{
   box-shadow:0 1px 5px #000;
 }
 
-/* estrela REMOVIDA */
 #styleTitle::before{
-  content:none !important;
-  display:none !important;
+  content:none;
+
+  position:absolute;
+
+  right:-5px;
+  top:0;
+
+  font-family:Arial,sans-serif;
+  font-size:105px;
+  line-height:1;
+
+  color:#9c48ff;
+
+  text-shadow:
+    0 0 8px #9c48ff,
+    0 0 22px #7200ff,
+    0 0 45px #4500a8;
+
+  transform:rotate(-10deg);
+
+  z-index:-1;
 }
 
 /* =========================
@@ -142,34 +159,9 @@ body{
   -webkit-text-fill-color:transparent;
 
   -webkit-text-stroke:2px #090817;
-
-  text-shadow:none;
 }
 
-#styleTitle.title-ultra{
-  font-family:Arial,sans-serif !important;
-
-  font-size:72px;
-
-  font-weight:900 !important;
-  font-style:normal !important;
-
-  color:#fff;
-
-  background:none;
-
-  -webkit-background-clip:initial;
-  background-clip:initial;
-
-  -webkit-text-fill-color:#fff;
-
-  -webkit-text-stroke:2px #080812;
-
-  text-shadow:
-    0 3px 0 #29255c,
-    0 6px 8px #000;
-}
-
+#styleTitle.title-ultra,
 #styleTitle.title-gradient{
   font-style:normal !important;
 }
@@ -180,13 +172,7 @@ body{
 
 #grid{
   width:100%;
-
-  /*
-    20% menos largas,
-    mas sem alterar a posição
-    geral do grid.
-  */
-  max-width:640px;
+  max-width:800px;
 
   margin:0 auto;
 
@@ -235,24 +221,6 @@ body{
 }
 
 /* =========================
-   STAT BACKGROUND
-========================= */
-
-/*
-  Fundo restante:
-  somente na exportação recebe
-  transparência + degradê.
-*/
-.exporting-stats .box{
-  background:
-    linear-gradient(
-      180deg,
-      rgba(2,10,17,.30),
-      rgba(2,10,17,.70)
-    ) !important;
-}
-
-/* =========================
    STAT FILL
 ========================= */
 
@@ -263,10 +231,6 @@ body{
   top:5px;
   bottom:5px;
 
-  /*
-    O JS coloca o valor exato em px.
-    max-width impede qualquer overflow.
-  */
   width:var(--fill-width,0%);
 
   max-width:calc(100% - 10px);
@@ -278,37 +242,6 @@ body{
   z-index:2;
 
   pointer-events:none;
-
-  overflow:hidden;
-}
-
-/*
-  No export, deixa uma área
-  arredondada/degradê atrás do restante.
-*/
-.exporting-stats .box::after{
-  content:"";
-
-  position:absolute;
-
-  left:0;
-  right:0;
-
-  bottom:0;
-
-  height:55%;
-
-  border-radius:0 0 8px 8px;
-
-  background:linear-gradient(
-    180deg,
-    rgba(255,255,255,0),
-    rgba(255,255,255,.10)
-  );
-
-  pointer-events:none;
-
-  z-index:1;
 }
 
 /* =========================
@@ -341,36 +274,12 @@ body{
 
   color:#fff;
 
-  /*
-    Um único contorno limpo.
-    Nada de quatro text-shadow
-    brigando com a fonte.
-  */
+  /* contorno limpo */
   -webkit-text-stroke:1px #000;
 
   text-shadow:none;
 
   pointer-events:none;
-}
-
-/*
-  Exportação usa exatamente
-  a mesma aparência da edição.
-*/
-.exporting-stats .name{
-  font-family:'Roboto Condensed',Arial,sans-serif !important;
-
-  font-size:24px;
-
-  font-weight:700;
-
-  font-style:italic !important;
-
-  color:#fff;
-
-  -webkit-text-stroke:1px #000;
-
-  text-shadow:none !important;
 }
 
 /* =========================
@@ -408,13 +317,7 @@ body{
 
 .box.rainbow-border{
   border-color:transparent !important;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(2,10,17,.30),
-      rgba(2,10,17,.70)
-    ) !important;
+  background:#020a11 !important;
 }
 
 .box.rainbow-border::before{
@@ -638,27 +541,6 @@ button:hover{
 }
 
 /* =========================
-   EXPORT
-========================= */
-
-#app.exporting .name{
-  -webkit-text-stroke:1px #000 !important;
-
-  text-shadow:none !important;
-}
-
-/*
-  garante que a barra nunca
-  ultrapasse a borda durante export
-*/
-#app.exporting .fill,
-.exporting-stats .fill{
-  max-width:calc(100% - 10px) !important;
-
-  overflow:hidden !important;
-}
-
-/* =========================
    MOBILE
 ========================= */
 
@@ -683,17 +565,13 @@ button:hover{
   }
 
   #styleTitle::before{
-    content:none !important;
-    display:none !important;
+    right:-8px;
+    font-size:75px;
   }
 
   #grid{
     width:100%;
 
-    /*
-      Mantém as 2 colunas da interface mobile,
-      só reduz a largura individual.
-    */
     grid-template-columns:
       repeat(2,minmax(0,1fr)) !important;
 
@@ -731,9 +609,13 @@ button:hover{
   .name{
     font-size:22px;
 
-    -webkit-text-stroke:1px #000;
+    -webkit-text-stroke:0;
 
-    text-shadow:none;
+    text-shadow:
+      1px 1px 0 #000,
+      -1px 1px 0 #000,
+      1px -1px 0 #000,
+      -1px -1px 0 #000;
   }
 
   .remove{
@@ -748,4 +630,43 @@ button:hover{
   input[type=number]{
     width:100px;
   }
+}
+
+
+/* =========================
+   EXPORT ONLY
+========================= */
+
+#app.exporting .box{
+  background:linear-gradient(
+    180deg,
+    rgba(2,10,17,.30),
+    rgba(2,10,17,.70)
+  ) !important;
+}
+
+#app.exporting .box::after{
+  content:"";
+  position:absolute;
+  left:5px;
+  right:5px;
+  bottom:5px;
+  height:60%;
+  border-radius:6px;
+  background:linear-gradient(
+    180deg,
+    rgba(255,255,255,0),
+    rgba(255,255,255,.08)
+  );
+  pointer-events:none;
+  z-index:1;
+}
+
+#app.exporting .fill{
+  max-width:calc(100% - 10px) !important;
+}
+
+#app.exporting .name{
+  -webkit-text-stroke:1px #000 !important;
+  text-shadow:none !important;
 }
