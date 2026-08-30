@@ -7,7 +7,7 @@
 <title>Concept Creator</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Orbitron:wght@600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&display=swap');
 
 *{
   box-sizing:border-box;
@@ -66,7 +66,7 @@ body{
 
   color:#aaa5ff;
 
-  -webkit-text-stroke:2px #080812;
+  -webkit-text-stroke:0;
 
   text-shadow:
     0 3px 0 #29255c,
@@ -130,7 +130,7 @@ body{
 
   -webkit-text-fill-color:transparent;
 
-  -webkit-text-stroke:2px #090817;
+  -webkit-text-stroke:0;
 
   text-shadow:none;
 }
@@ -147,7 +147,7 @@ body{
 
   -webkit-text-fill-color:transparent;
 
-  -webkit-text-stroke:2px #090817;
+  -webkit-text-stroke:0;
 
   text-shadow:none;
 }
@@ -162,19 +162,32 @@ body{
   font-size:72px;
 
   font-weight:900 !important;
-
   font-style:italic !important;
 
   letter-spacing:2px;
 
-  color:#dcd9ff;
+  background:linear-gradient(
+    90deg,
+    #ff0000 0%,
+    #ff7a00 14%,
+    #fff000 28%,
+    #25ff00 42%,
+    #00d9ff 56%,
+    #396cff 70%,
+    #9d39ff 84%,
+    #ff00d9 100%
+  );
 
-  -webkit-text-stroke:2px #090817;
+  background-size:100% 100%;
 
-  text-shadow:
-    0 3px 0 #29255c,
-    0 6px 8px #000,
-    0 0 14px rgba(150,120,255,.35);
+  -webkit-background-clip:text;
+  background-clip:text;
+
+  -webkit-text-fill-color:transparent;
+
+  -webkit-text-stroke:0;
+
+  text-shadow:none;
 }
 
 /* =========================
@@ -286,15 +299,17 @@ body{
 
   color:#fff;
 
-  -webkit-text-stroke:0.8px #000;
+  -webkit-text-stroke:0;
 
   text-shadow:
-    1px 0 #000,
-    -1px 0 #000,
-    0 1px #000,
-    0 -1px #000;
-
-  paint-order:stroke fill;
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000,
+    -2px  0   0 #000,
+     2px  0   0 #000,
+     0   -2px 0 #000,
+     0    2px 0 #000;
 
   pointer-events:none;
 }
@@ -648,19 +663,21 @@ button:hover{
   .name{
     font-size:22px;
 
-    font-weight:700;
-
-    font-style:italic !important;
-
-    -webkit-text-stroke:0.8px #000;
+    -webkit-text-stroke:0;
 
     text-shadow:
-      1px 0 #000,
-      -1px 0 #000,
-      0 1px #000,
-      0 -1px #000;
+      -1px -1px 0 #000,
+       1px -1px 0 #000,
+      -1px  1px 0 #000,
+       1px  1px 0 #000,
+      -2px  0   0 #000,
+       2px  0   0 #000,
+       0   -2px 0 #000,
+       0    2px 0 #000;
+  }
 
-    paint-order:stroke fill;
+  #styleTitle.title-ultra{
+    font-size:52px;
   }
 
   .remove{
@@ -854,8 +871,7 @@ function update(box){
       )
     );
 
-  const c =
-    color(v);
+  const c = color(v);
 
   box.style.setProperty(
     '--color',
@@ -881,12 +897,6 @@ function update(box){
       ? 'linear-gradient(90deg,#ff0000,#ff7a00,#fff000,#25ff00,#00d9ff,#396cff,#9d39ff,#ff00d9)'
       : c;
 
-
-  /*
-    A barra usa exatamente a área interna
-    disponível, sem ultrapassar o limite.
-  */
-
   const available =
     Math.max(
       0,
@@ -896,10 +906,7 @@ function update(box){
   const fillWidth =
     Math.min(
       available,
-      Math.max(
-        0,
-        available * (v / 10)
-      )
+      available * (v / 10) * 0.8
     );
 
   fill.style.left =
@@ -1040,6 +1047,7 @@ function addBox(
       }catch(_){}
 
       setValue(e);
+
     }
   );
 
@@ -1057,6 +1065,7 @@ function addBox(
         setValue(e);
 
       }
+
     }
   );
 
@@ -1075,7 +1084,9 @@ function addBox(
 
       box.style.cursor =
         'grab';
+
     }
+
   };
 
 
@@ -1088,6 +1099,7 @@ function addBox(
     'pointercancel',
     stop
   );
+
 }
 
 
@@ -1103,26 +1115,14 @@ function setValue(e){
   const r =
     dragging.getBoundingClientRect();
 
-  /*
-    Usa a posição relativa ao box.
-    Clamp de 0 a 10 garante que nunca passa
-    do começo ou do fim.
-  */
-
-  let x =
-    e.clientX - r.left;
-
-  x =
+  const v =
     Math.max(
       0,
       Math.min(
-        r.width,
-        x
+        10,
+        ((e.clientX - r.left) / r.width) * 10
       )
     );
-
-  const v =
-    (x / r.width) * 10;
 
   dragging.dataset.value =
     v;
@@ -1162,6 +1162,7 @@ document.getElementById(
     'styleTitle'
   ).textContent =
     value || 'Name';
+
 };
 
 
@@ -1191,10 +1192,11 @@ document.getElementById(
     '';
 
   title.style.webkitTextStroke =
-    '2px #000';
+    '0';
 
   title.style.textShadow =
     '0 3px 0 #29255c,0 6px 8px #000';
+
 };
 
 
@@ -1219,6 +1221,7 @@ document.getElementById(
   title.classList.toggle(
     'title-ultra'
   );
+
 };
 
 
@@ -1267,6 +1270,7 @@ titleGradient.onclick = () => {
     '--title-bottom',
     titleGradientBottom.value
   );
+
 };
 
 
@@ -1292,6 +1296,7 @@ titleGradient.onclick = () => {
       '--title-bottom',
       titleGradientBottom.value
     );
+
   };
 
 });
@@ -1328,6 +1333,7 @@ document.getElementById(
   document.getElementById(
     'statValue'
   ).value = 5;
+
 };
 
 
@@ -1360,6 +1366,7 @@ rainbowButton.onclick = () => {
     rainbowMode
       ? 'Now click a stat to enable/disable Rainbow'
       : 'Click Rainbow, then click a stat';
+
 };
 
 
@@ -1384,6 +1391,7 @@ grid.addEventListener(
         : 'true';
 
     update(box);
+
   }
 );
 
@@ -1403,8 +1411,10 @@ document.getElementById(
         0;
 
       update(box);
+
     }
   );
+
 };
 
 
@@ -1419,8 +1429,10 @@ document.getElementById(
         10;
 
       update(box);
+
     }
   );
+
 };
 
 
@@ -1430,6 +1442,7 @@ document.getElementById(
 
   grid.innerHTML =
     '';
+
 };
 
 
@@ -1589,7 +1602,8 @@ document.getElementById(
           Math.min(
             available,
             available *
-            (v / 10)
+            (v / 10) *
+            0.8
           );
 
 
@@ -1620,6 +1634,7 @@ document.getElementById(
 
         cloneFill.style.bottom =
           '5px';
+
       }
     );
 
@@ -1779,9 +1794,11 @@ document.getElementById(
       cs.fontFamily ||
       'Arial';
 
+
     const fontWeight =
       cs.fontWeight ||
       '700';
+
 
     const fontStyle =
       cs.fontStyle ||
@@ -1802,13 +1819,9 @@ document.getElementById(
       'round';
 
 
-    const isGradient =
+    const isUltra =
       title.classList.contains(
-        'title-gradient'
-      ) ||
-
-      title.classList.contains(
-        'title-custom-gradient'
+        'title-ultra'
       );
 
 
@@ -1816,7 +1829,64 @@ document.getElementById(
       titleH / 2;
 
 
-    if(
+    /* =========================
+       ULTRA RAINBOW
+    ========================= */
+
+    if(isUltra){
+
+      const g =
+        ctx.createLinearGradient(
+          0,
+          0,
+          out.width,
+          0
+        );
+
+      g.addColorStop(
+        0,
+        '#ff0000'
+      );
+
+      g.addColorStop(
+        .14,
+        '#ff7a00'
+      );
+
+      g.addColorStop(
+        .28,
+        '#fff000'
+      );
+
+      g.addColorStop(
+        .42,
+        '#25ff00'
+      );
+
+      g.addColorStop(
+        .56,
+        '#00d9ff'
+      );
+
+      g.addColorStop(
+        .70,
+        '#396cff'
+      );
+
+      g.addColorStop(
+        .84,
+        '#9d39ff'
+      );
+
+      g.addColorStop(
+        1,
+        '#ff00d9'
+      );
+
+      ctx.fillStyle =
+        g;
+
+    }else if(
       title.classList.contains(
         'title-custom-gradient'
       )
@@ -1875,6 +1945,7 @@ document.getElementById(
           0
         );
 
+
       g.addColorStop(
         0,
         '#ff0000'
@@ -1924,11 +1995,12 @@ document.getElementById(
       ctx.fillStyle =
         cs.color ||
         '#ffffff';
+
     }
 
 
     /*
-      Contorno do título
+      contorno do título
     */
 
     ctx.lineWidth =
